@@ -1,1 +1,0 @@
-export { defineUIComponent } from "./defineUIComponent";
