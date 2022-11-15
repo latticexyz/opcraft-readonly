@@ -183,11 +183,13 @@ export const phaserConfig = {
   },
   scale: defineScaleConfig({
     parent: "phaser-game",
-    zoom: 2,
+    width: 100,
+    height: 100,
+    zoom: 1,
     mode: Phaser.Scale.NONE,
+    // TODO: figure out why I can't set this to "RESIZE" and let phaser figure out the container sizing
   }),
   cameraConfig: defineCameraConfig({
-    phaserSelector: "phaser-game",
     pinchSpeed: 1 / 32,
     wheelSpeed: 1,
     maxZoom: 4,
