@@ -38,7 +38,7 @@ export function createMapSystem(context: PhaserLayer, network: NetworkLayer) {
   chunks.addedChunks$.subscribe(addedChunks$);
   const newTile$ = new Subject<Coord>();
 
-  // Prevent redrawing the entire map on each tick
+  // Prevent clearing the entire map before each redraw (before each tick)
   (phaserScene.game.renderer.config as any).clearBeforeRender = false;
   /**
    * Draw the given tile at the given coord on the given layer on all maps
