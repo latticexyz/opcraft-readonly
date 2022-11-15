@@ -59,7 +59,7 @@ export const phaserConfig = {
           },
         }),
         [Maps.X8]: defineMapConfig({
-          chunkSize: TILE_WIDTH * 64 * 16, // tile size * tile amount
+          chunkSize: TILE_WIDTH * 64 * 8, // tile size * tile amount
           tileWidth: TILE_WIDTH * 8,
           tileHeight: TILE_HEIGHT * 8,
           backgroundTile: [0],
@@ -73,7 +73,7 @@ export const phaserConfig = {
           },
         }),
         [Maps.X16]: defineMapConfig({
-          chunkSize: TILE_WIDTH * 64 * 64, // tile size * tile amount
+          chunkSize: TILE_WIDTH * 64 * 16, // tile size * tile amount
           tileWidth: TILE_WIDTH * 16,
           tileHeight: TILE_HEIGHT * 16,
           backgroundTile: [0],
@@ -87,7 +87,7 @@ export const phaserConfig = {
           },
         }),
         [Maps.Heat]: defineMapConfig({
-          chunkSize: TILE_WIDTH * 64 * 64, // tile size * tile amount
+          chunkSize: TILE_WIDTH * 64 * 16, // tile size * tile amount
           tileWidth: TILE_WIDTH * 16,
           tileHeight: TILE_HEIGHT * 16,
           backgroundTile: [0],
@@ -139,7 +139,7 @@ export const phaserConfig = {
           },
         }),
         [Maps.HeightX8]: defineMapConfig({
-          chunkSize: TILE_WIDTH * 64 * 16, // tile size * tile amount
+          chunkSize: TILE_WIDTH * 64 * 8, // tile size * tile amount
           tileWidth: TILE_WIDTH * 8,
           tileHeight: TILE_HEIGHT * 8,
           backgroundTile: [0],
@@ -152,7 +152,7 @@ export const phaserConfig = {
           },
         }),
         [Maps.HeightX16]: defineMapConfig({
-          chunkSize: TILE_WIDTH * 64 * 64, // tile size * tile amount
+          chunkSize: TILE_WIDTH * 64 * 16, // tile size * tile amount
           tileWidth: TILE_WIDTH * 16,
           tileHeight: TILE_HEIGHT * 16,
           backgroundTile: [0],
@@ -188,7 +188,7 @@ export const phaserConfig = {
   }),
   cameraConfig: defineCameraConfig({
     phaserSelector: "phaser-game",
-    pinchSpeed: 1 / 32,
+    pinchSpeed: 1 / 16,
     wheelSpeed: 1,
     maxZoom: 4,
     minZoom: 1 / 128,
