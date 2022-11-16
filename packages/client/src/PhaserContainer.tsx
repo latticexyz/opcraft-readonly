@@ -26,9 +26,10 @@ export const PhaserContainer = React.memo((props: Props) => {
   // I would have expected useResizeObserver to cache this, but throttling shows
   // that the callback just gets overwritten each time, bypassing the throttle.
   const onResize = useCallback<ResizeHandler>(
+    // debounce instead of throttle?
     throttle(({ width, height }) => {
       setSize({ width: width ?? 0, height: height ?? 0 });
-    }, 1000),
+    }, 500),
     []
   );
   const { ref } = useResizeObserver({ onResize });
