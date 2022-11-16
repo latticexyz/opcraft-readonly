@@ -1,8 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { NetworkLayer } from "./layers/network";
 import { createPhaserLayer, PhaserLayer } from "./layers/phaser";
 import { phaserConfig } from "./layers/phaser/config";
 import useResizeObserver from "use-resize-observer";
+import throttle from "lodash/throttle";
 
 // TODO: expose phaser layer to context
 // TODO: keep+pause the old phaser instance when spinning up a new one to avoid flash?
@@ -10,13 +11,27 @@ import useResizeObserver from "use-resize-observer";
 // TODO: dynamically generate this ID
 const phaserContainerId = "phaser-container";
 
+// use-resize-observer doesn't export this type for us :(
+type ResizeHandler = NonNullable<Required<Parameters<typeof useResizeObserver>>[0]["onResize"]>;
+
 type Props = {
   networkLayer: NetworkLayer;
 };
 
 export const PhaserContainer = React.memo((props: Props) => {
   const phaserRef = useRef<Promise<PhaserLayer> | null>(null);
-  const { ref, width = 0, height = 0 } = useResizeObserver();
+
+  const [{ width, height }, setSize] = useState({ width: 0, height: 0 });
+
+  // I would have expected useResizeObserver to cache this, but throttling shows
+  // that the callback just gets overwritten each time, bypassing the throttle.
+  const onResize = useCallback<ResizeHandler>(
+    throttle(({ width, height }) => {
+      setSize({ width: width ?? 0, height: height ?? 0 });
+    }, 1000),
+    []
+  );
+  const { ref } = useResizeObserver({ onResize });
 
   console.log("PhaserContainer rendered");
 

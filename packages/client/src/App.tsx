@@ -1,18 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { createNetworkLayer, NetworkLayer } from "./layers/network";
+import React, { useRef } from "react";
+import { useNetworkLayer } from "./NetworkLayerContext";
 import { PhaserContainer } from "./PhaserContainer";
 
-const networkLayerPromise = createNetworkLayer({
-  // TODO
-});
-
 export const App = () => {
+  const networkLayer = useNetworkLayer();
   const ref = useRef<HTMLDivElement | null>(null);
-  const [networkLayer, setNetworkLayer] = useState<NetworkLayer | null>(null);
-
-  useEffect(() => {
-    networkLayerPromise.then(setNetworkLayer);
-  }, []);
 
   return (
     <>
