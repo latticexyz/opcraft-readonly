@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useNetworkLayer } from "./NetworkLayerContext";
 import { PhaserContainer } from "./PhaserContainer";
 
