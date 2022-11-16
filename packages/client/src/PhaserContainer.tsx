@@ -2,8 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { NetworkLayer } from "./layers/network";
 import { createPhaserLayer, PhaserLayer } from "./layers/phaser";
 import { phaserConfig } from "./layers/phaser/config";
-import useResizeObserver from "use-resize-observer";
 import throttle from "lodash/throttle";
+import { useResizeObserver, ResizeHandler } from "./useResizeObserver";
 
 // TODO: expose phaser layer to context
 // TODO: keep+pause the old phaser instance when spinning up a new one to avoid flash?
@@ -11,15 +11,13 @@ import throttle from "lodash/throttle";
 // TODO: dynamically generate this ID
 const phaserContainerId = "phaser-container";
 
-// use-resize-observer doesn't export this type for us :(
-type ResizeHandler = NonNullable<Required<Parameters<typeof useResizeObserver>>[0]["onResize"]>;
-
 type Props = {
   networkLayer: NetworkLayer;
+  hidden?: boolean;
 };
 
-const PhaserContainer = (props: Props) => {
-  const phaserRef = useRef<Promise<PhaserLayer> | null>(null);
+const PhaserContainer = ({ networkLayer, hidden = false }: Props) => {
+  const layerRef = useRef<Promise<PhaserLayer> | null>(null);
 
   const [{ width, height }, setSize] = useState({ width: 0, height: 0 });
 
@@ -38,7 +36,20 @@ const PhaserContainer = (props: Props) => {
   console.log("PhaserContainer rendered");
 
   useEffect(() => {
-    phaserRef.current?.then((phaserLayer) => {
+    if (!layerRef.current) return;
+    console.log(hidden ? "hiding phaser layer" : "showing phaser layer");
+    layerRef.current.then((layer) => {
+      layer.game.canvas.hidden = hidden;
+      if (hidden) {
+        layer.scenes.Main.input.disableInput();
+      } else {
+        layer.scenes.Main.input.enableInput();
+      }
+    });
+  }, [hidden]);
+
+  useEffect(() => {
+    layerRef.current?.then((phaserLayer) => {
       // Phaser has a game option that should automatically fit to its parent
       // Not sure why its not working, so we're simulating it here
       console.log("resizing phaser to", width, height);
@@ -47,14 +58,14 @@ const PhaserContainer = (props: Props) => {
   }, [width, height]);
 
   useEffect(() => {
-    if (phaserRef.current) {
+    if (layerRef.current) {
       console.log("disposing of existing phaser layer");
-      phaserRef.current.then((phaserLayer) => {
+      layerRef.current.then((phaserLayer) => {
         phaserLayer.world.dispose();
       });
     }
     console.log("creating phaser layer");
-    phaserRef.current = createPhaserLayer(props.networkLayer, {
+    layerRef.current = createPhaserLayer(networkLayer, {
       ...phaserConfig,
       scale: {
         ...phaserConfig.scale,
@@ -64,9 +75,9 @@ const PhaserContainer = (props: Props) => {
       },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props]);
+  }, [networkLayer]);
 
-  return <div ref={ref} id={phaserContainerId} style={{ width: "100%", height: "100%" }}></div>;
+  return <div ref={ref} id={phaserContainerId} style={{ width: "100%", height: "100%" }} hidden={hidden}></div>;
 };
 
 const MemoizedPhaserContainer = React.memo(PhaserContainer);

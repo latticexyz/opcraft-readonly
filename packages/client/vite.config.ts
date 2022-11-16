@@ -24,9 +24,9 @@ export default defineConfig({
   // resolve: {
   //   dedupe: ["proxy-deep", "styled-components"],
   // },
-  // define: {
-  //   global: "globalThis",
-  // },
+  define: {
+    global: "globalThis",
+  },
   // optimizeDeps: {
   //   esbuildOptions: {
   //     target: "es2022",

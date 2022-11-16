@@ -54,7 +54,7 @@ import { createSpawnPlayerSystem } from "./systems/createSpawnPlayerSystem";
 import { definePlayerMeshComponent } from "./components/PlayerMesh";
 import { Engine } from "@babylonjs/core";
 
-export function createNoaLayer(network: NetworkLayer) {
+export function createNoaLayer(network: NetworkLayer, engineOpts?: Record<string, any>) {
   const world = namespaceWorld(network.world, "noa");
   const {
     worldAddress,
@@ -82,7 +82,7 @@ export function createNoaLayer(network: NetworkLayer) {
   };
 
   // --- SETUP ----------------------------------------------------------------------
-  const { noa, setBlock, glow } = setupNoaEngine(network.api);
+  const { noa, setBlock, glow } = setupNoaEngine(network.api, engineOpts);
 
   // Because NOA and RECS currently use different ECS libraries we need to maintain a mapping of RECS ID to Noa ID
   // A future version of OPCraft will remove the NOA ECS library and use pure RECS only

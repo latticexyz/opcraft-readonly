@@ -18,7 +18,7 @@ export interface API {
   getECSBlockAtPosition: (coord: VoxelCoord) => EntityID | undefined;
 }
 
-export function setupNoaEngine(api: API) {
+export function setupNoaEngine(api: API, engineOpts?: Record<string, any>) {
   const opts = {
     debug: false,
     showFPS: true,
@@ -38,6 +38,7 @@ export function setupNoaEngine(api: API) {
     AOmultipliers: [0.93, 0.8, 0.5],
     reverseAOmultiplier: 1.0,
     preserveDrawingBuffer: true,
+    ...(engineOpts ?? {}),
   };
 
   // Hack Babylon in order to have a -1 rendering group for the sky (to be always drawn behind everything else)
