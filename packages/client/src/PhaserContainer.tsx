@@ -18,13 +18,14 @@ type Props = {
   networkLayer: NetworkLayer;
 };
 
-export const PhaserContainer = React.memo((props: Props) => {
+const PhaserContainer = (props: Props) => {
   const phaserRef = useRef<Promise<PhaserLayer> | null>(null);
 
   const [{ width, height }, setSize] = useState({ width: 0, height: 0 });
 
   // I would have expected useResizeObserver to cache this, but throttling shows
   // that the callback just gets overwritten each time, bypassing the throttle.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onResize = useCallback<ResizeHandler>(
     // debounce instead of throttle?
     throttle(({ width, height }) => {
@@ -62,7 +63,11 @@ export const PhaserContainer = React.memo((props: Props) => {
         height,
       },
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props]);
 
   return <div ref={ref} id={phaserContainerId} style={{ width: "100%", height: "100%" }}></div>;
-});
+};
+
+const MemoizedPhaserContainer = React.memo(PhaserContainer);
+export { MemoizedPhaserContainer as PhaserContainer };
