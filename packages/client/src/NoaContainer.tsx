@@ -17,6 +17,7 @@ const NoaContainer = ({ networkLayer, hidden }: Props) => {
   console.log("NoaContainer rendered");
 
   useEffect(() => {
+    console.log("got new network layer");
     if (!containerRef.current) {
       throw new Error(
         "NoaContainer ref was not set before useEffect, this is unexpected for the React version this was built with"
@@ -31,6 +32,11 @@ const NoaContainer = ({ networkLayer, hidden }: Props) => {
     // TODO: make noa layer async?
     layerRef.current = createNoaLayer(networkLayer, { domElement: containerRef.current });
     layerRef.current.noa.setPaused(hidden);
+    // TODO: yuck, revisit this
+    window.layers = {
+      ...(window.layers ?? {}),
+      noa: layerRef.current,
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkLayer]);
 
@@ -41,8 +47,8 @@ const NoaContainer = ({ networkLayer, hidden }: Props) => {
   }, [hidden]);
 
   return (
-    <div ref={containerRef} style={{ width: "100%", height: "100%" }} hidden={hidden}>
-      <canvas style={{ width: "100%", height: "100%" }} />
+    <div ref={containerRef} style={{ width: "100%", height: "100%", pointerEvents: "all" }} hidden={hidden}>
+      <canvas style={{ width: "100%", height: "100%", outline: "none" }} />
     </div>
   );
 };

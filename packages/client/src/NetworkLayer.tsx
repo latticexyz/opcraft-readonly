@@ -40,28 +40,31 @@ export const NetworkLayer = ({ children }: Props) => {
   const blockTime = parseInt(params.get("blockTime") ?? "") || networkDefaults.blockTime;
   const blockExplorer = params.get("blockExplorer") ?? networkDefaults.blockExplorer;
 
+  const privateKey = getBurnerWallet();
+
   // TODO: render errors rather than throwing?
   if (!worldAddress) throw new Error("Missing world address");
   if (!chainId) throw new Error("Missing chain ID");
   if (!jsonRpc) throw new Error("Missing RPC URL");
   // TODO: any other checks to do?
 
-  const config = useMemo(
-    (): GameConfig => ({
-      privateKey: getBurnerWallet(),
-      worldAddress,
-      chainId,
-      jsonRpc,
-      wsRpc,
-      snapshotUrl,
-      streamServiceUrl,
-      relayServiceUrl,
-      faucetServiceUrl,
-      devMode,
-      blockTime,
-      initialBlockNumber,
-      blockExplorer,
-    }),
+  const networkLayer = useMemo(
+    () =>
+      createNetworkLayer({
+        privateKey,
+        worldAddress,
+        chainId,
+        jsonRpc,
+        wsRpc,
+        snapshotUrl,
+        streamServiceUrl,
+        relayServiceUrl,
+        faucetServiceUrl,
+        devMode,
+        blockTime,
+        initialBlockNumber,
+        blockExplorer,
+      }),
     [
       blockExplorer,
       blockTime,
@@ -70,6 +73,7 @@ export const NetworkLayer = ({ children }: Props) => {
       faucetServiceUrl,
       initialBlockNumber,
       jsonRpc,
+      privateKey,
       relayServiceUrl,
       snapshotUrl,
       streamServiceUrl,
@@ -78,5 +82,5 @@ export const NetworkLayer = ({ children }: Props) => {
     ]
   );
 
-  return <NetworkLayerProvider value={createNetworkLayer(config)}>{children}</NetworkLayerProvider>;
+  return <NetworkLayerProvider value={networkLayer}>{children}</NetworkLayerProvider>;
 };

@@ -49,13 +49,14 @@ const PhaserContainer = ({ networkLayer, hidden = false }: Props) => {
   }, [hidden]);
 
   useEffect(() => {
+    if (hidden) return;
     layerRef.current?.then((phaserLayer) => {
       // Phaser has a game option that should automatically fit to its parent
       // Not sure why its not working, so we're simulating it here
       console.log("resizing phaser to", width, height);
       phaserLayer.game.scale.resize(width, height);
     });
-  }, [width, height]);
+  }, [width, height, hidden]);
 
   useEffect(() => {
     if (layerRef.current) {
@@ -77,7 +78,14 @@ const PhaserContainer = ({ networkLayer, hidden = false }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkLayer]);
 
-  return <div ref={ref} id={phaserContainerId} style={{ width: "100%", height: "100%" }} hidden={hidden}></div>;
+  return (
+    <div
+      ref={ref}
+      id={phaserContainerId}
+      style={{ width: "100%", height: "100%", pointerEvents: "all" }}
+      hidden={hidden}
+    ></div>
+  );
 };
 
 const MemoizedPhaserContainer = React.memo(PhaserContainer);

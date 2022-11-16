@@ -289,17 +289,24 @@ export function createNoaLayer(network: NetworkLayer, engineOpts?: Record<string
   // --- SETUP STREAMS --------------------------------------------------------------
   // (Create streams as BehaviorSubject to allow for multiple observers and getting the current value)
   const playerPosition$ = new BehaviorSubject(getCurrentPlayerPosition());
-  world.registerDisposer(timer(0, 200).pipe(map(getCurrentPlayerPosition)).subscribe(playerPosition$)?.unsubscribe);
+  const playerPositionSub = timer(0, 200).pipe(map(getCurrentPlayerPosition)).subscribe(playerPosition$);
+  // If we just pass `unsubscribe` in here, eventually scope is lost and results in a bunch of exceptions
+  // So we have to wrap it in a function and call unsubscribe manually.
+  world.registerDisposer(() => playerPositionSub.unsubscribe());
 
   const slowPlayerPosition$ = playerPosition$.pipe(throttleTime(10000));
 
   const playerChunk$ = new BehaviorSubject(getCurrentChunk());
-  world.registerDisposer(playerPosition$.pipe(map((pos) => getChunkCoord(pos))).subscribe(playerChunk$)?.unsubscribe);
+  const playerChunkSub = playerPosition$.pipe(map((pos) => getChunkCoord(pos))).subscribe(playerChunk$);
+  // If we just pass `unsubscribe` in here, eventually scope is lost and results in a bunch of exceptions
+  // So we have to wrap it in a function and call unsubscribe manually.
+  world.registerDisposer(() => playerChunkSub.unsubscribe());
 
   const stakeAndClaim$ = new BehaviorSubject(getStakeAndClaim(getCurrentChunk()));
-  world.registerDisposer(
-    playerChunk$.pipe(map((coord) => getStakeAndClaim(coord))).subscribe(stakeAndClaim$)?.unsubscribe
-  );
+  const stakeAndClaimSub = playerChunk$.pipe(map((coord) => getStakeAndClaim(coord))).subscribe(stakeAndClaim$);
+  // If we just pass `unsubscribe` in here, eventually scope is lost and results in a bunch of exceptions
+  // So we have to wrap it in a function and call unsubscribe manually.
+  world.registerDisposer(() => stakeAndClaimSub.unsubscribe());
 
   const context = {
     world,

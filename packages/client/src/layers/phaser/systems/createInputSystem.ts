@@ -5,6 +5,7 @@ import { TILE_WIDTH, TILE_HEIGHT } from "../constants";
 import { getHighestTilesAt } from "../getHighestTilesAt";
 import { PhaserLayer } from "../types";
 import { filter } from "rxjs";
+import { router } from "../../../router";
 
 export function createInputSystem(context: PhaserLayer, network: NetworkLayer) {
   const {
@@ -61,7 +62,12 @@ export function createInputSystem(context: PhaserLayer, network: NetworkLayer) {
         return;
       }
 
-      await window.setView?.("game");
+      // await window.setView?.("game");
+      const params = new URLSearchParams(window.location.search);
+      params.set("view", "game");
+      console.log(`navigating to ${window.location.pathname}?${params.toString()}`);
+      router.navigate(`${window.location.pathname}?${params.toString()}`);
+
       // offset x, z by 0.5 to center player on block
       // and offset y by 1 to be above block
       // TODO: should this be part of teleport itself?

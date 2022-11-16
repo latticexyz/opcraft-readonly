@@ -21,7 +21,7 @@ export interface API {
 export function setupNoaEngine(api: API, engineOpts?: Record<string, any>) {
   const opts = {
     debug: false,
-    showFPS: true,
+    showFPS: false,
     inverseY: false,
     inverseX: false,
     chunkAddDistance: [CHUNK_RENDER_DISTANCE + 3, CHUNK_RENDER_DISTANCE + 3],
