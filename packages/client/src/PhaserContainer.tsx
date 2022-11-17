@@ -4,6 +4,7 @@ import { createPhaserLayer, PhaserLayer } from "./layers/phaser";
 import { phaserConfig } from "./layers/phaser/config";
 import throttle from "lodash/throttle";
 import { useResizeObserver, ResizeHandler } from "./useResizeObserver";
+import { useStore } from "./store";
 
 // TODO: expose phaser layer to context
 // TODO: keep+pause the old phaser instance when spinning up a new one to avoid flash?
@@ -74,6 +75,9 @@ const PhaserContainer = ({ networkLayer, hidden = false }: Props) => {
         width,
         height,
       },
+    });
+    layerRef.current.then((phaserLayer) => {
+      useStore.setState({ phaserLayer });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkLayer]);

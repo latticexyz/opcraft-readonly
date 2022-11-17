@@ -1,6 +1,6 @@
 import React from "react";
 import { useSearchParams } from "react-router-dom";
-import { useNetworkLayer } from "./NetworkLayerContext";
+import { useNetworkLayer } from "./useNetworkLayer";
 import { NoaContainer } from "./NoaContainer";
 import { PhaserContainer } from "./PhaserContainer";
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { NetworkLayer } from "./layers/network";
 import { createNoaLayer, NoaLayer } from "./layers/noa";
+import { useStore } from "./store";
 
 // TODO: expose noa layer to context
 // TODO: keep+pause the old noa instance when spinning up a new one to avoid flash?
@@ -30,13 +31,10 @@ const NoaContainer = ({ networkLayer, hidden }: Props) => {
     }
     console.log("creating noa layer");
     // TODO: make noa layer async?
-    layerRef.current = createNoaLayer(networkLayer, { domElement: containerRef.current });
-    layerRef.current.noa.setPaused(hidden);
-    // TODO: yuck, revisit this
-    window.layers = {
-      ...(window.layers ?? {}),
-      noa: layerRef.current,
-    };
+    const noaLayer = createNoaLayer(networkLayer, { domElement: containerRef.current });
+    noaLayer.noa.setPaused(hidden);
+    layerRef.current = noaLayer;
+    useStore.setState({ noaLayer });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkLayer]);
 

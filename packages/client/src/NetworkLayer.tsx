@@ -1,8 +1,8 @@
-import React, { ReactNode, useMemo } from "react";
-import { NetworkLayerProvider } from "./NetworkLayerContext";
+import React, { ReactNode, useEffect } from "react";
 import { createNetworkLayer, GameConfig } from "./layers/network";
 import { useSearchParams } from "react-router-dom";
 import { getBurnerWallet } from "./getBurnerWallet";
+import { useStore } from "./store";
 
 const networkDefaults: Omit<GameConfig, "privateKey" | "devMode"> = {
   chainId: 64657,
@@ -48,9 +48,9 @@ export const NetworkLayer = ({ children }: Props) => {
   if (!jsonRpc) throw new Error("Missing RPC URL");
   // TODO: any other checks to do?
 
-  const networkLayer = useMemo(
-    () =>
-      createNetworkLayer({
+  useEffect(() => {
+    useStore.setState({
+      networkLayerPromise: createNetworkLayer({
         privateKey,
         worldAddress,
         chainId,
@@ -65,22 +65,22 @@ export const NetworkLayer = ({ children }: Props) => {
         initialBlockNumber,
         blockExplorer,
       }),
-    [
-      blockExplorer,
-      blockTime,
-      chainId,
-      devMode,
-      faucetServiceUrl,
-      initialBlockNumber,
-      jsonRpc,
-      privateKey,
-      relayServiceUrl,
-      snapshotUrl,
-      streamServiceUrl,
-      worldAddress,
-      wsRpc,
-    ]
-  );
+    });
+  }, [
+    blockExplorer,
+    blockTime,
+    chainId,
+    devMode,
+    faucetServiceUrl,
+    initialBlockNumber,
+    jsonRpc,
+    privateKey,
+    relayServiceUrl,
+    snapshotUrl,
+    streamServiceUrl,
+    worldAddress,
+    wsRpc,
+  ]);
 
-  return <NetworkLayerProvider value={networkLayer}>{children}</NetworkLayerProvider>;
+  return <>{children}</>;
 };
