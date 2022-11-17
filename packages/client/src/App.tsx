@@ -19,8 +19,21 @@ export const App = () => {
         <div style={{ position: "absolute", inset: "0", pointerEvents: "none" }}>
           <NoaContainer networkLayer={networkLayer} hidden={view !== "game"} />
         </div>
-        <div style={{ position: "absolute", inset: "0", pointerEvents: "none" }}>
-          <PhaserContainer networkLayer={networkLayer} hidden={view !== "map"} />
+        <div
+          style={{
+            position: "absolute",
+            pointerEvents: "none",
+            ...(view === "map"
+              ? { inset: "0" }
+              : {
+                  top: "10px",
+                  right: "10px",
+                  width: "20%",
+                  height: "20%",
+                }),
+          }}
+        >
+          <PhaserContainer networkLayer={networkLayer} />
         </div>
         <div style={{ position: "absolute", top: "10px", left: "10px", background: "#333", padding: "10px" }}>
           <button type="button" disabled={view === "map"} onClick={() => setParams({ view: "map" })}>
