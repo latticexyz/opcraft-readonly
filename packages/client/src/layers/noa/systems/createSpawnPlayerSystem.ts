@@ -2,6 +2,7 @@ import { SyncState } from "@latticexyz/network";
 import { getComponentValue, getComponentValueStrict, hasComponent } from "@latticexyz/recs";
 import { awaitStreamValue } from "@latticexyz/utils";
 import { concat, map, of } from "rxjs";
+import { store } from "../../../store";
 import { NetworkLayer } from "../../network";
 import { PhaserLayer } from "../../phaser";
 import { TILE_HEIGHT, TILE_WIDTH } from "../../phaser/constants";
@@ -33,25 +34,19 @@ export function createSpawnPlayerSystem(network: NetworkLayer, context: NoaLayer
     const body = noa.ents.getPhysics(1)?.body;
     if (body) body.gravityMultiplier = 2;
 
+    const { phaserLayer } = store.getState();
+
     if (hasComponent(LocalPlayerPosition, SingletonEntity)) {
       const position = getComponentValueStrict(LocalPlayerPosition, SingletonEntity);
       console.log("setting noa position from local player position", position);
       setNoaPosition(noa, noa.playerEntity, position);
       console.log("centering phaser map on local player position", position);
-      window.layers?.phaser?.scenes.Main.camera.centerOnCoord(
-        { x: position.x, y: position.z },
-        TILE_WIDTH,
-        TILE_HEIGHT
-      );
+      phaserLayer?.scenes.Main.camera.centerOnCoord({ x: position.x, y: position.z }, TILE_WIDTH, TILE_HEIGHT);
     } else {
       console.log("setting noa position to spawn", SPAWN_POINT);
       setNoaPosition(noa, noa.playerEntity, SPAWN_POINT);
       console.log("centering phaser map on spawn", SPAWN_POINT);
-      window.layers?.phaser?.scenes.Main.camera.centerOnCoord(
-        { x: SPAWN_POINT.x, y: SPAWN_POINT.z },
-        TILE_WIDTH,
-        TILE_HEIGHT
-      );
+      phaserLayer?.scenes.Main.camera.centerOnCoord({ x: SPAWN_POINT.x, y: SPAWN_POINT.z }, TILE_WIDTH, TILE_HEIGHT);
     }
   });
 }

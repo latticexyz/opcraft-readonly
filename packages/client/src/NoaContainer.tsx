@@ -40,7 +40,7 @@ const NoaContainer = ({ networkLayer, hidden }: Props) => {
 
   useEffect(() => {
     if (!layerRef.current) return;
-    console.log(hidden ? "hiding phaser layer" : "showing phaser layer");
+    console.log(hidden ? "hiding noa layer" : "showing noa layer");
     layerRef.current.noa.setPaused(hidden);
   }, [hidden]);
 

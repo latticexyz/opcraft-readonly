@@ -8,6 +8,8 @@ import { merge, Subject } from "rxjs";
 import { TILE_HEIGHT } from "../constants";
 import { getHighestTilesAt } from "../getHighestTilesAt";
 
+// TODO: rescale tiles to 2x current size, since the default zoom/scale of the map is now 1x to help with container sizing
+
 /**
  * System reacts to viewport changes and draws the map data (ecs, procgen) to the phaser tilemap
  */
