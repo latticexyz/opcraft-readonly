@@ -60,7 +60,7 @@
     "styled-components": "^5.3.5",
     "threads": "^1.7.0",
     "type-fest": "^2.18.1",
-    "use-resize-observer": "^9.0.2",
+    "use-resize-observer": "9.1.0-alpha.1",
     "uuid": "^8.3.2",
     "voxel-aabb-sweep": "^0.5.0",
     "voxel-crunch": "^0.2.1",

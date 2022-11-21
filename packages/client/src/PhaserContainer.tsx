@@ -3,7 +3,7 @@ import { NetworkLayer } from "./layers/network";
 import { createPhaserLayer, PhaserLayer } from "./layers/phaser";
 import { phaserConfig } from "./layers/phaser/config";
 import throttle from "lodash/throttle";
-import { useResizeObserver, ResizeHandler } from "./useResizeObserver";
+import useResizeObserver, { ResizeHandler } from "use-resize-observer";
 import { useStore } from "./store";
 
 // TODO: expose phaser layer to context
