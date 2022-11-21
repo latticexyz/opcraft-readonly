@@ -6,6 +6,9 @@ import { LoadingScreen } from "./LoadingScreen";
 import { ViewToggle } from "./ViewToggle";
 import { useView } from "./useView";
 import { Position } from "./Position";
+import styled from "styled-components";
+import { JoinSocial } from "./layers/react/components/JoinSocial";
+import { MapLayerToggle } from "./MapLayerToggle";
 
 export const App = () => {
   const networkLayer = useNetworkLayer();
@@ -36,11 +39,22 @@ export const App = () => {
             >
               <PhaserContainer networkLayer={networkLayer} />
             </div>
+
+            <Socials>
+              <JoinSocial />
+            </Socials>
             <ViewToggle />
             <Position />
+            <MapLayerToggle />
           </>
         ) : null}
       </div>
     </>
   );
 };
+
+const Socials = styled.div`
+  position: absolute;
+  right: 20px;
+  top: 20px;
+`;
