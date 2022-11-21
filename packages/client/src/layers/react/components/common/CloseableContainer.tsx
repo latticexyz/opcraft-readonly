@@ -1,14 +1,17 @@
 import { ActionState } from "@latticexyz/std-client";
 import React from "react";
-import styled, { ThemedStyledFunction } from "styled-components";
+import styled from "styled-components";
 import { ActionStatusIcon } from "../Action";
 import { Container } from "./Container";
 
-export const CloseableContainer: React.FC<
-  { onClose?: () => void } & Partial<ThemedStyledFunction<"div", any, any, never>>
-> = ({ onClose, children, ...props }) => {
+type Props = {
+  onClose?: () => void;
+  children: React.ReactNode;
+};
+
+export const CloseableContainer = ({ onClose, children }: Props) => {
   return (
-    <RelativeContainer {...props}>
+    <RelativeContainer>
       {onClose && (
         <CloseButton onClick={onClose}>
           <ActionStatusIcon state={ActionState.Failed} />

@@ -8,7 +8,7 @@ import { NetworkLayer } from "./layers/network";
 import { concat } from "rxjs";
 
 type Props = {
-  networkLayer: NetworkLayer;
+  networkLayer: NetworkLayer | null;
 };
 
 const useLoadingState = (networkLayer: NetworkLayer) => {
@@ -34,6 +34,13 @@ const useLoadingState = (networkLayer: NetworkLayer) => {
 };
 
 export const LoadingScreen = ({ networkLayer }: Props) => {
+  if (!networkLayer) {
+    return <BootScreen initialOpacity={1}>Connecting</BootScreen>;
+  }
+  return <LoadingScreenWithNetworkLayer networkLayer={networkLayer} />;
+};
+
+export const LoadingScreenWithNetworkLayer = ({ networkLayer }: { networkLayer: NetworkLayer }) => {
   const loadingState = useLoadingState(networkLayer);
   if (loadingState == null) {
     return <BootScreen initialOpacity={1}>Connecting</BootScreen>;
