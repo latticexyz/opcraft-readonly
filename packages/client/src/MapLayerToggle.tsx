@@ -90,8 +90,8 @@ export const MapLayerToggle = () => {
 
 const MapLayerToggleContainer = styled(Container)`
   position: absolute;
-  right: 20px;
-  bottom: 20px;
+  right: 0;
+  bottom: 0;
   width: 150px;
   line-height: 1;
   pointer-events: all;

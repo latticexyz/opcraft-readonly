@@ -46,8 +46,8 @@ export const ViewToggle = () => {
 
 const ViewToggleContainer = styled(Container)`
   position: absolute;
-  left: 20px;
-  top: 20px;
+  left: 0;
+  top: 0;
   line-height: 1;
   pointer-events: all;
 

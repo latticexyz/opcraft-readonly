@@ -20,9 +20,10 @@ export const App = () => {
         <LoadingScreen networkLayer={networkLayer} />
         {networkLayer ? (
           <>
-            <div style={{ position: "absolute", inset: "0", pointerEvents: "none" }}>
+            <Layer>
               <NoaContainer networkLayer={networkLayer} hidden={view !== "game"} />
-            </div>
+            </Layer>
+
             <div
               style={{
                 position: "absolute",
@@ -40,12 +41,14 @@ export const App = () => {
               <PhaserContainer networkLayer={networkLayer} />
             </div>
 
-            <Socials>
-              <JoinSocial />
-            </Socials>
-            <ViewToggle />
-            <Position />
-            <MapLayerToggle />
+            <Layer style={{ inset: "20px" }}>
+              <Socials>
+                <JoinSocial />
+              </Socials>
+              <ViewToggle />
+              <Position />
+              <MapLayerToggle />
+            </Layer>
           </>
         ) : null}
       </div>
@@ -55,6 +58,12 @@ export const App = () => {
 
 const Socials = styled.div`
   position: absolute;
-  right: 20px;
-  top: 20px;
+  right: 0;
+  top: 0;
+`;
+
+const Layer = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 `;

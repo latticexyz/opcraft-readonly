@@ -139,8 +139,8 @@ export const Position = () => {
 
 const PositionContainer = styled.div`
   position: absolute;
-  left: 20px;
-  bottom: 20px;
+  left: 0;
+  bottom: 0;
   line-height: 1;
   display: flex;
   flex-direction: column;
