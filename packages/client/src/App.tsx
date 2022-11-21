@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useNetworkLayer } from "./useNetworkLayer";
 import { NoaContainer } from "./NoaContainer";
 import { PhaserContainer } from "./PhaserContainer";
+import { LoadingScreen } from "./LoadingScreen";
 
 export const App = () => {
   const networkLayer = useNetworkLayer();
@@ -16,6 +17,7 @@ export const App = () => {
   return (
     <>
       <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
+        <LoadingScreen networkLayer={networkLayer} />
         <div style={{ position: "absolute", inset: "0", pointerEvents: "none" }}>
           <NoaContainer networkLayer={networkLayer} hidden={view !== "game"} />
         </div>

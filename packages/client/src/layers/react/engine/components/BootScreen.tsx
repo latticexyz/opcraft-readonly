@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
-export const BootScreen: React.FC<{ initialOpacity?: number }> = ({ children, initialOpacity }) => {
+type Props = {
+  initialOpacity?: number;
+  children: React.ReactNode;
+};
+
+export const BootScreen = ({ children, initialOpacity }: Props) => {
   const [opacity, setOpacity] = useState(initialOpacity ?? 0);
 
   useEffect(() => setOpacity(1), []);
