@@ -1,6 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNetworkLayer } from "./useNetworkLayer";
-import { NoaContainer } from "./NoaContainer";
 import { PhaserContainer } from "./PhaserContainer";
 import { LoadingScreen } from "./LoadingScreen";
 import { ViewToggle } from "./ViewToggle";
@@ -9,48 +8,54 @@ import { Position } from "./Position";
 import styled from "styled-components";
 import { JoinSocial } from "./layers/react/components/JoinSocial";
 import { MapLayerToggle } from "./MapLayerToggle";
+import { useNoaLayer } from "./useNoaLayer";
+import { useStore } from "./store";
 
 export const App = () => {
   const networkLayer = useNetworkLayer();
   const [view] = useView();
+  const { ref: noaRef, noaLayer } = useNoaLayer({ networkLayer, hidden: view !== "game" });
+
+  useEffect(() => {
+    if (noaLayer) {
+      useStore.setState({ noaLayer });
+    }
+  }, [noaLayer]);
 
   return (
     <>
       <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
         <LoadingScreen networkLayer={networkLayer} />
+
+        <Layer ref={noaRef} />
+
         {networkLayer ? (
-          <>
-            <Layer>
-              <NoaContainer networkLayer={networkLayer} hidden={view !== "game"} />
-            </Layer>
-
-            <div
-              style={{
-                position: "absolute",
-                pointerEvents: "none",
-                ...(view === "map"
-                  ? { inset: "0" }
-                  : {
-                      top: "10px",
-                      right: "10px",
-                      width: "20%",
-                      height: "20%",
-                    }),
-              }}
-            >
-              <PhaserContainer networkLayer={networkLayer} />
-            </div>
-
-            <Layer style={{ inset: "20px" }}>
-              <Socials>
-                <JoinSocial />
-              </Socials>
-              <ViewToggle />
-              <Position />
-              <MapLayerToggle />
-            </Layer>
-          </>
+          <div
+            style={{
+              position: "absolute",
+              pointerEvents: "none",
+              ...(view === "map"
+                ? { inset: "0" }
+                : {
+                    top: "10px",
+                    right: "10px",
+                    width: "20%",
+                    height: "20%",
+                  }),
+            }}
+          >
+            <PhaserContainer networkLayer={networkLayer} />
+          </div>
         ) : null}
+
+        <Layer style={{ inset: "20px" }}>
+          <Socials>
+            <JoinSocial />
+          </Socials>
+          <ViewToggle />
+          <Position />
+          <MapLayerToggle />
+        </Layer>
       </div>
     </>
   );

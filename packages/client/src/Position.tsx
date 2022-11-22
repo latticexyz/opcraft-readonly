@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { pixelCoordToTileCoord } from "@latticexyz/phaserx";
-import { map, distinctUntilChanged, of, filter, merge } from "rxjs";
+import { map, distinctUntilChanged, merge, EMPTY } from "rxjs";
 import styled from "styled-components";
 import { TILE_HEIGHT, TILE_WIDTH } from "./layers/phaser/constants";
 import { Button, CloseableContainer, Container, Gold } from "./layers/react/components/common";
@@ -46,9 +46,10 @@ const usePlayerPosition = () => {
       })
     );
 
-    const noaPlayerPosition$ = playerPosition$.pipe(filter(() => view === "game"));
-
-    const position$ = merge(of({ x: 0, y: 0, z: 0 }), pointerPosition$, noaPlayerPosition$).pipe(
+    const position$ = merge(
+      view === "map" ? pointerPosition$ : EMPTY,
+      view === "game" ? playerPosition$.pipe() : EMPTY
+    ).pipe(
       map((position) => mapObject<VoxelCoord, VoxelCoord>(position, (value) => Math.round(value))),
       distinctUntilChanged((a, b) => a.x === b.x && a.y === b.y && a.z === b.z)
     );
