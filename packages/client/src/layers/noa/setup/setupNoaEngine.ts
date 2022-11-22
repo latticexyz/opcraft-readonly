@@ -4,7 +4,7 @@ import { Engine } from "noa-engine";
 import "@babylonjs/core/Meshes/Builders/boxBuilder";
 import * as BABYLON from "@babylonjs/core";
 import { VoxelCoord } from "@latticexyz/utils";
-import { Blocks, Textures } from "../constants";
+import { Blocks, SPAWN_POINT, Textures } from "../constants";
 import { BlockType, BlockTypeIndex } from "../../network";
 import { EntityID } from "@latticexyz/recs";
 import { NoaBlockType } from "../types";
@@ -28,7 +28,7 @@ export function setupNoaEngine(api: API, engineOpts?: Record<string, any>) {
     chunkRemoveDistance: [CHUNK_RENDER_DISTANCE + 8, CHUNK_RENDER_DISTANCE + 8],
     chunkSize: CHUNK_SIZE,
     gravity: [0, -17, 0],
-    playerStart: [-20000, 100, 20000],
+    playerStart: [SPAWN_POINT.x, SPAWN_POINT.y, SPAWN_POINT.z],
     blockTestDistance: 7,
     playerHeight: 1.85,
     playerWidth: 0.6,

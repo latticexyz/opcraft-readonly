@@ -186,8 +186,8 @@ export const phaserConfig = {
     width: 100,
     height: 100,
     zoom: 1,
-    mode: Phaser.Scale.NONE,
-    // TODO: figure out why I can't set this to "RESIZE" and let phaser figure out the container sizing
+    mode: Phaser.Scale.RESIZE,
+    resizeInterval: 100,
   }),
   cameraConfig: defineCameraConfig({
     pinchSpeed: 1 / 32,

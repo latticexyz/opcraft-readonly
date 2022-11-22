@@ -22,7 +22,7 @@ type Props = {
   hidden?: boolean;
 };
 
-export const useNoaLayer = ({ networkLayer, hidden }: Props) => {
+export const useNoaLayer = ({ networkLayer, hidden = false }: Props) => {
   const parentRef = useRef<HTMLElement | null>(null);
   const [value, setValue] = useState<{ noaLayer: NoaLayer; container: HTMLElement } | null>(null);
 
