@@ -91,7 +91,7 @@ export const Position = () => {
           <p>Y: {y}</p>
           <p>Z: {z}</p>
           <div style={{ marginTop: "8px" }}>
-            <Button onClick={() => setShowTeleport(true)} disabled={!teleport}>
+            <Button onClick={() => setShowTeleport(true)} disabled={!teleport} style={{ width: "100%" }}>
               Teleport
             </Button>
           </div>

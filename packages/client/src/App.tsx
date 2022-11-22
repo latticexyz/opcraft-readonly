@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNetworkLayer } from "./useNetworkLayer";
-import { PhaserContainer } from "./PhaserContainer";
 import { LoadingScreen } from "./LoadingScreen";
 import { ViewToggle } from "./ViewToggle";
 import { useView } from "./useView";
@@ -8,49 +7,34 @@ import { Position } from "./Position";
 import styled from "styled-components";
 import { JoinSocial } from "./layers/react/components/JoinSocial";
 import { MapLayerToggle } from "./MapLayerToggle";
-import { useNoaLayer } from "./useNoaLayer";
-import { useStore } from "./store";
-import { usePhaserLayer } from "./usePhaserLayer";
+import { NoaLayer } from "./NoaLayer";
+import { PhaserLayer } from "./PhaserLayer";
+import { Container } from "./layers/react/components/common";
 
 export const App = () => {
   const networkLayer = useNetworkLayer();
   const [view] = useView();
-  const { ref: noaRef, noaLayer } = useNoaLayer({ networkLayer, hidden: view !== "game" });
-  const { ref: phaserRef, phaserLayer } = usePhaserLayer({ networkLayer });
-
-  useEffect(() => {
-    if (noaLayer) {
-      useStore.setState({ noaLayer });
-    }
-  }, [noaLayer]);
-
-  useEffect(() => {
-    if (phaserLayer) {
-      useStore.setState({ phaserLayer });
-    }
-  }, [phaserLayer]);
 
   return (
     <>
       <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
         <LoadingScreen networkLayer={networkLayer} />
 
-        <Layer ref={noaRef} />
-        <div
-          ref={phaserRef}
-          style={{
-            position: "absolute",
-            pointerEvents: "none",
-            ...(view === "map"
-              ? { inset: "0" }
-              : {
-                  top: "10px",
-                  right: "10px",
-                  width: "20%",
-                  height: "20%",
-                }),
-          }}
-        />
+        <Layer>
+          <NoaLayer networkLayer={networkLayer} hidden={view !== "game"} />
+        </Layer>
+
+        <PhaserLayer networkLayer={networkLayer}>
+          {(phaserLayer) =>
+            view === "map" ? (
+              <Layer>{phaserLayer}</Layer>
+            ) : (
+              <div style={{ position: "absolute", right: "20px", top: "20px" }}>
+                <Container style={{ width: "20vmin", height: "20vmin" }}>{phaserLayer}</Container>
+              </div>
+            )
+          }
+        </PhaserLayer>
 
         <Layer style={{ inset: "20px" }}>
           <Socials>
@@ -67,8 +51,9 @@ export const App = () => {
 
 const Socials = styled.div`
   position: absolute;
-  right: 0;
-  top: 0;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
 `;
 
 const Layer = styled.div`

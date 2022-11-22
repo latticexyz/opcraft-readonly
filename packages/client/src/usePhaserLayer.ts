@@ -4,6 +4,7 @@ import { createPhaserLayer, PhaserLayer } from "./layers/phaser";
 import { phaserConfig } from "./layers/phaser/config";
 
 // TODO: keep+pause the old phaser instance when spinning up a new one to avoid flash?
+// TODO: use our own ResizeObserver instead of phaser's native resize on an interval (it's buggy)
 
 const createContainer = () => {
   const container = document.createElement("div");
@@ -21,7 +22,6 @@ type Props = {
 };
 
 export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
-  const [{ width, height }, setSize] = useState({ width: 0, height: 0 });
   const parentRef = useRef<HTMLElement | null>(null);
   const [value, setValue] = useState<{ phaserLayer: PhaserLayer; container: HTMLElement } | null>(null);
 
@@ -39,8 +39,6 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
       scale: {
         ...phaserConfig.scale,
         parent: container.id,
-        width,
-        height,
       },
     });
     phaserLayerPromise.then((phaserLayer) => setValue({ phaserLayer, container }));
