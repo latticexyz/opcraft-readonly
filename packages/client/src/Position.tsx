@@ -137,11 +137,12 @@ const PositionContainer = styled.div`
 
 const TeleportOverlay = styled.div`
   position: absolute;
-  inset: 0;
+  inset: -20px;
   background: rgba(31, 31, 31, 0.8);
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 100;
 `;
 
 const TeleportForm = styled.form`
