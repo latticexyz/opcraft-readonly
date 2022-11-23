@@ -1,45 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React, { useMemo } from "react";
 import { map, concat, of } from "rxjs";
 import styled from "styled-components";
 import { Container } from "./layers/react/components/common";
 import { getComponentValue } from "@latticexyz/recs";
-import { useNetworkLayer } from "./useNetworkLayer";
 import { useStore } from "./store";
-
-const useToggles = () => {
-  const networkLayer = useNetworkLayer();
-  const phaserLayer = useStore((state) => state.phaserLayer);
-  const [toggles, setToggles] = useState({
-    activity: false,
-    height: false,
-    terrain: false,
-  });
-
-  useEffect(() => {
-    if (!networkLayer || !phaserLayer) return;
-
-    const {
-      components: { UI },
-    } = phaserLayer;
-    const { SingletonEntity } = networkLayer;
-
-    const subscription = concat(
-      of(getComponentValue(UI, SingletonEntity)),
-      UI.update$.pipe(map((update) => update.value[0]))
-    ).subscribe((update) => {
-      if (!update) return;
-      setToggles(update);
-    });
-    return () => subscription.unsubscribe();
-  }, [networkLayer, phaserLayer]);
-
-  return toggles;
-};
+import { useObservable } from "./useObservable";
+import { filterNullish } from "@latticexyz/utils";
 
 export const MapLayerToggle = () => {
-  const toggles = useToggles();
+  const networkLayer = useStore((state) => state.networkLayer);
   const phaserLayer = useStore((state) => state.phaserLayer);
+  const toggles = useObservable(
+    useMemo(() => {
+      if (!networkLayer || !phaserLayer) return;
+
+      const {
+        components: { UI },
+      } = phaserLayer;
+      const { SingletonEntity } = networkLayer;
+
+      return concat(of(getComponentValue(UI, SingletonEntity)), UI.update$.pipe(map((update) => update.value[0]))).pipe(
+        filterNullish()
+      );
+    }, [networkLayer, phaserLayer])
+  ) ?? { activity: false, height: false, terrain: false };
+
   const toggleMap = phaserLayer?.api.toggleMap;
+
   return (
     <MapLayerToggleContainer>
       <p>

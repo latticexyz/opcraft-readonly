@@ -1,5 +1,4 @@
 import React from "react";
-import { useNetworkLayer } from "./useNetworkLayer";
 import { LoadingScreen } from "./LoadingScreen";
 import { ViewToggle } from "./ViewToggle";
 import { useView } from "./useView";
@@ -10,9 +9,10 @@ import { MapLayerToggle } from "./MapLayerToggle";
 import { NoaLayer } from "./NoaLayer";
 import { PhaserLayer } from "./PhaserLayer";
 import { Container } from "./layers/react/components/common";
+import { useStore } from "./store";
 
 export const App = () => {
-  const networkLayer = useNetworkLayer();
+  const networkLayer = useStore((state) => state.networkLayer);
   const [view] = useView();
 
   return (

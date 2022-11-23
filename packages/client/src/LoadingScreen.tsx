@@ -1,53 +1,44 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { BootScreen } from "./layers/react/engine";
-import { ComponentValue, getComponentValue, SchemaOf } from "@latticexyz/recs";
+import { getComponentValue } from "@latticexyz/recs";
 import { GodID, SyncState } from "@latticexyz/network";
 import styled from "styled-components";
 import { LoadingBar } from "./layers/react/components/common";
 import { NetworkLayer } from "./layers/network";
-import { concat } from "rxjs";
+import { concat, map } from "rxjs";
+import { useObservable } from "./useObservable";
 
 type Props = {
   networkLayer: NetworkLayer | null;
 };
 
-const useLoadingState = (networkLayer: NetworkLayer) => {
-  const {
-    components: { LoadingState },
-    world,
-  } = networkLayer;
-
-  const [value, setValue] = React.useState<ComponentValue<SchemaOf<typeof LoadingState>> | null>(null);
-  React.useEffect(() => {
-    // use LoadingState.update$ as a trigger rather than a value
-    // and concat with an initial value to trigger the first look up
-    const subscription = concat([1], LoadingState.update$).subscribe(() => {
-      // and then look up the current value
-      const GodEntityIndex = world.entityToIndex.get(GodID);
-      const loadingState = GodEntityIndex == null ? null : getComponentValue(LoadingState, GodEntityIndex);
-      setValue(loadingState ?? null);
-    });
-    return () => subscription.unsubscribe();
-  }, [LoadingState, world]);
-
-  return value;
-};
-
 export const LoadingScreen = ({ networkLayer }: Props) => {
-  if (!networkLayer) {
-    return <BootScreen initialOpacity={1}>Connecting</BootScreen>;
-  }
-  return <LoadingScreenWithNetworkLayer networkLayer={networkLayer} />;
-};
+  const loadingState = useObservable(
+    useMemo(() => {
+      if (!networkLayer) return;
 
-export const LoadingScreenWithNetworkLayer = ({ networkLayer }: { networkLayer: NetworkLayer }) => {
-  const loadingState = useLoadingState(networkLayer);
-  if (loadingState == null) {
-    return <BootScreen initialOpacity={1}>Connecting</BootScreen>;
-  }
+      const {
+        components: { LoadingState },
+        world,
+      } = networkLayer;
+
+      // use LoadingState.update$ as a trigger rather than a value
+      // and concat with an initial value to trigger the first look up
+      return concat([1], LoadingState.update$).pipe(
+        map(() => {
+          // and then look up the current value
+          const GodEntityIndex = world.entityToIndex.get(GodID);
+          const loadingState = GodEntityIndex == null ? null : getComponentValue(LoadingState, GodEntityIndex);
+          return loadingState ?? null;
+        })
+      );
+    }, [networkLayer])
+  ) ?? { msg: "Connecting...", percentage: 0, state: SyncState.CONNECTING };
+
   if (loadingState.state === SyncState.LIVE) {
     return null;
   }
+
   return (
     <BootScreen initialOpacity={1}>
       {loadingState.msg}
