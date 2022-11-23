@@ -10,6 +10,7 @@ import { NoaLayer } from "./NoaLayer";
 import { PhaserLayer } from "./PhaserLayer";
 import { Container } from "./layers/react/components/common";
 import { useStore } from "./store";
+import { Layer } from "./Layer";
 
 export const App = () => {
   const networkLayer = useStore((state) => state.networkLayer);
@@ -54,10 +55,4 @@ const Socials = styled.div`
   left: 50%;
   bottom: 0;
   transform: translateX(-50%);
-`;
-
-const Layer = styled.div`
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
 `;
