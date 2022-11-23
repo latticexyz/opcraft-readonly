@@ -29,6 +29,8 @@ export function setupNoaEngine(api: API, engineOpts?: Record<string, any>) {
     chunkSize: CHUNK_SIZE,
     gravity: [0, -17, 0],
     playerStart: [SPAWN_POINT.x, SPAWN_POINT.y, SPAWN_POINT.z],
+    // workaround for ECS blocks/chunks not loading in where you spawn
+    // playerStart: [-20000, 100, 20000],
     blockTestDistance: 7,
     playerHeight: 1.85,
     playerWidth: 0.6,
