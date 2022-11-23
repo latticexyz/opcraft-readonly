@@ -48,11 +48,15 @@ export const useNoaLayer = ({ networkLayer, hidden = false }: Props) => {
   }, [container, noaLayer]);
 
   useEffect(() => {
-    if (!noaLayer) return;
     console.log(hidden ? "hiding noa layer" : "showing noa layer");
-    noaLayer.noa.setPaused(hidden);
-    noaLayer.noa.container.setPointerLock(!hidden);
-  }, [hidden, noaLayer]);
+    if (container) {
+      container.hidden = hidden;
+    }
+    if (noaLayer) {
+      noaLayer.noa.setPaused(hidden);
+      noaLayer.noa.container.setPointerLock(!hidden);
+    }
+  }, [container, hidden, noaLayer]);
 
   const ref = useCallback(
     (el: HTMLElement | null) => {

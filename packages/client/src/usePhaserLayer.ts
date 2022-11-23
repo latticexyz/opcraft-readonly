@@ -65,15 +65,18 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
   const phaserLayer = usePromiseValue(phaserLayerPromise);
 
   useEffect(() => {
-    if (!phaserLayer) return;
     console.log(hidden ? "hiding phaser layer" : "showing phaser layer");
-    phaserLayer.game.canvas.hidden = hidden;
-    if (hidden) {
-      phaserLayer.scenes.Main.input.disableInput();
-    } else {
-      phaserLayer.scenes.Main.input.enableInput();
+    if (container) {
+      container.hidden = hidden;
     }
-  }, [hidden, phaserLayer]);
+    if (phaserLayer) {
+      if (hidden) {
+        phaserLayer.scenes.Main.input.disableInput();
+      } else {
+        phaserLayer.scenes.Main.input.enableInput();
+      }
+    }
+  }, [container, hidden, phaserLayer]);
 
   const onResize = useMemo<ResizeHandler>(() => {
     console.log("setting up on resize");
