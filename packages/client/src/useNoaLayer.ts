@@ -1,8 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState, useMemo } from "react";
+import React, { useCallback, useEffect, useRef, useMemo } from "react";
 import { NetworkLayer } from "./layers/network";
-import { createNoaLayer, NoaLayer } from "./layers/noa";
-
-// TODO: keep+pause the old noa instance when spinning up a new one to avoid flash?
+import { createNoaLayer } from "./layers/noa";
 
 const createContainer = () => {
   const container = document.createElement("div");
@@ -24,49 +22,52 @@ type Props = {
 
 export const useNoaLayer = ({ networkLayer, hidden = false }: Props) => {
   const parentRef = useRef<HTMLElement | null>(null);
-  const [value, setValue] = useState<{ noaLayer: NoaLayer; container: HTMLElement } | null>(null);
+
+  const { noaLayer, container } =
+    useMemo(() => {
+      if (!networkLayer) return { noaLayer: null, container: null };
+      console.log("got new network layer");
+
+      console.log("creating noa layer");
+      const container = createContainer();
+      if (parentRef.current) {
+        parentRef.current.appendChild(container);
+      }
+      return {
+        noaLayer: createNoaLayer(networkLayer, { domElement: container }),
+        container,
+      };
+    }, [networkLayer]) ?? {};
 
   useEffect(() => {
-    if (!networkLayer) return;
-    console.log("got new network layer");
-
-    console.log("creating noa layer");
-    const container = createContainer();
-    if (parentRef.current) {
-      parentRef.current.appendChild(container);
-    }
-    const noaLayer = createNoaLayer(networkLayer, { domElement: container });
-    setValue({ noaLayer, container });
-
     return () => {
-      console.log("disposing of noa layer");
-      noaLayer.world.dispose();
-      container.remove();
+      console.log("disposing of old noa layer");
+      noaLayer?.world.dispose();
+      container?.remove();
     };
-  }, [networkLayer]);
+  }, [container, noaLayer]);
 
   useEffect(() => {
-    if (!value) return;
+    if (!noaLayer) return;
     console.log(hidden ? "hiding noa layer" : "showing noa layer");
-    value.noaLayer.noa.setPaused(hidden);
-    value.noaLayer.noa.container.setPointerLock(!hidden);
-  }, [hidden, value]);
+    noaLayer.noa.setPaused(hidden);
+    noaLayer.noa.container.setPointerLock(!hidden);
+  }, [hidden, noaLayer]);
 
   const ref = useCallback(
     (el: HTMLElement | null) => {
       console.log("got new noa parent el", el);
-      if (el) {
-        parentRef.current = el;
-        if (value) {
-          el.appendChild(value.container);
+      parentRef.current = el;
+      if (container) {
+        if (parentRef.current) {
+          parentRef.current.appendChild(container);
+        } else {
+          container.remove();
         }
-      } else {
-        parentRef.current = null;
-        value?.container.remove();
       }
     },
-    [value]
+    [container]
   );
 
-  return useMemo(() => ({ ref, noaLayer: value?.noaLayer }), [ref, value?.noaLayer]);
+  return useMemo(() => ({ ref, noaLayer }), [ref, noaLayer]);
 };

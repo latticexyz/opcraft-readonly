@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { createNetworkLayer, GameConfig, NetworkLayer } from "./layers/network";
+import React, { useEffect, useMemo } from "react";
+import { createNetworkLayer, GameConfig } from "./layers/network";
 import { useSearchParams } from "react-router-dom";
 import { getBurnerWallet } from "./getBurnerWallet";
+import { usePromiseValue } from "./usePromiseValue";
 
 const networkDefaults: Omit<GameConfig, "privateKey" | "devMode"> = {
   chainId: 64657,
@@ -18,9 +19,6 @@ const networkDefaults: Omit<GameConfig, "privateKey" | "devMode"> = {
 };
 
 export const useNetworkLayer = () => {
-  const promiseRef = useRef<Promise<NetworkLayer> | null>(null);
-  const [networkLayer, setNetworkLayer] = useState<NetworkLayer | null>(null);
-
   const [params] = useSearchParams();
 
   const worldAddress = params.get("worldAddress") ?? networkDefaults.worldAddress;
@@ -44,55 +42,46 @@ export const useNetworkLayer = () => {
   if (!jsonRpc) throw new Error("Missing RPC URL");
   // TODO: any other checks to do?
 
-  useEffect(() => {
-    let isMounted = true;
-    const networkLayerPromise = createNetworkLayer({
-      privateKey,
-      worldAddress,
+  const networkLayerPromise = useMemo(
+    () =>
+      createNetworkLayer({
+        privateKey,
+        worldAddress,
+        chainId,
+        jsonRpc,
+        wsRpc,
+        snapshotUrl,
+        streamServiceUrl,
+        relayServiceUrl,
+        faucetServiceUrl,
+        devMode,
+        blockTime,
+        initialBlockNumber,
+        blockExplorer,
+      }),
+    [
+      blockExplorer,
+      blockTime,
       chainId,
+      devMode,
+      faucetServiceUrl,
+      initialBlockNumber,
       jsonRpc,
-      wsRpc,
+      privateKey,
+      relayServiceUrl,
       snapshotUrl,
       streamServiceUrl,
-      relayServiceUrl,
-      faucetServiceUrl,
-      devMode,
-      blockTime,
-      initialBlockNumber,
-      blockExplorer,
-    });
-    promiseRef.current = networkLayerPromise;
-    networkLayerPromise.then((networkLayer) => {
-      if (isMounted && promiseRef.current === networkLayerPromise) {
-        setNetworkLayer(networkLayer);
-      }
-    });
-    return () => {
-      isMounted = false;
-    };
-  }, [
-    blockExplorer,
-    blockTime,
-    chainId,
-    devMode,
-    faucetServiceUrl,
-    initialBlockNumber,
-    jsonRpc,
-    privateKey,
-    relayServiceUrl,
-    snapshotUrl,
-    streamServiceUrl,
-    worldAddress,
-    wsRpc,
-  ]);
+      worldAddress,
+      wsRpc,
+    ]
+  );
 
   useEffect(() => {
-    // do nothing
     return () => {
-      console.log("disposing of network layer");
-      networkLayer?.world.dispose();
+      console.log("disposing of old network layer");
+      networkLayerPromise.then((networkLayer) => networkLayer.world.dispose());
     };
-  }, [networkLayer]);
+  }, [networkLayerPromise]);
 
-  return networkLayer;
+  return usePromiseValue(networkLayerPromise);
 };

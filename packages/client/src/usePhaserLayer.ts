@@ -4,8 +4,7 @@ import { createPhaserLayer, PhaserLayer } from "./layers/phaser";
 import { phaserConfig } from "./layers/phaser/config";
 import useResizeObserver, { ResizeHandler } from "use-resize-observer";
 import { throttle } from "lodash";
-
-// TODO: keep+pause the old phaser instance when spinning up a new one to avoid flash?
+import { usePromiseValue } from "./usePromiseValue";
 
 const createContainer = () => {
   const container = document.createElement("div");
@@ -26,8 +25,8 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
   const [value, setValue] = useState<{ phaserLayer: PhaserLayer; container: HTMLElement } | null>(null);
   const [{ width, height }, setSize] = useState({ width: 0, height: 0 });
 
-  useEffect(() => {
-    if (!networkLayer) return;
+  const { phaserLayerPromise, container } = useMemo(() => {
+    if (!networkLayer) return { phaserLayerPromise: null, container: null };
     console.log("got new network layer");
 
     console.log("creating phaser layer");
@@ -35,39 +34,46 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
     if (parentRef.current) {
       parentRef.current.appendChild(container);
     }
-    const phaserLayerPromise = createPhaserLayer(networkLayer, {
-      ...phaserConfig,
-      scale: {
-        ...phaserConfig.scale,
-        parent: container,
-        // Phaser's default resize handling isn't great, so we'll do our own
-        // TODO: make a Phaser PR for this?
-        mode: Phaser.Scale.NONE,
-        width,
-        height,
-      },
-    });
-    phaserLayerPromise.then((phaserLayer) => setValue({ phaserLayer, container }));
-
-    return () => {
-      console.log("disposing of phaser layer");
-      phaserLayerPromise.then((phaserLayer) => phaserLayer.world.dispose());
-      container.remove();
+    return {
+      container,
+      phaserLayerPromise: createPhaserLayer(networkLayer, {
+        ...phaserConfig,
+        scale: {
+          ...phaserConfig.scale,
+          parent: container,
+          // Phaser's default resize handling isn't great, so we'll do our own
+          // TODO: make a Phaser PR for this?
+          mode: Phaser.Scale.NONE,
+          width,
+          height,
+        },
+      }),
     };
 
+    // We don't want width/height to recreate phaser layer, so we ignore linter
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [networkLayer]);
 
   useEffect(() => {
-    if (!value) return;
+    return () => {
+      console.log("disposing of old phaser layer");
+      phaserLayerPromise?.then((phaserLayer) => phaserLayer.world.dispose());
+      container?.remove();
+    };
+  }, [container, phaserLayerPromise]);
+
+  const phaserLayer = usePromiseValue(phaserLayerPromise);
+
+  useEffect(() => {
+    if (!phaserLayer) return;
     console.log(hidden ? "hiding phaser layer" : "showing phaser layer");
-    value.phaserLayer.game.canvas.hidden = hidden;
+    phaserLayer.game.canvas.hidden = hidden;
     if (hidden) {
-      value.phaserLayer.scenes.Main.input.disableInput();
+      phaserLayer.scenes.Main.input.disableInput();
     } else {
-      value.phaserLayer.scenes.Main.input.enableInput();
+      phaserLayer.scenes.Main.input.enableInput();
     }
-  }, [hidden, value]);
+  }, [hidden, phaserLayer]);
 
   const onResize = useMemo<ResizeHandler>(() => {
     console.log("setting up on resize");
@@ -77,30 +83,30 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
     }, 500);
   }, []);
   useResizeObserver({
-    ref: value?.container,
+    ref: container,
     onResize,
   });
 
   useEffect(() => {
-    if (hidden || !value) return;
+    if (hidden || !phaserLayer) return;
     console.log("resizing phaser to", width, height);
-    value.phaserLayer.game.scale.resize(width, height);
-  }, [width, height, hidden, value]);
+    phaserLayer.game.scale.resize(width, height);
+  }, [width, height, hidden, phaserLayer]);
 
   const ref = useCallback(
     (el: HTMLElement | null) => {
       console.log("got new phaser parent el", el);
       parentRef.current = el;
-      if (value) {
+      if (container) {
         if (parentRef.current) {
-          parentRef.current.appendChild(value.container);
+          parentRef.current.appendChild(container);
         } else {
-          value.container.remove();
+          container.remove();
         }
       }
     },
-    [value]
+    [container]
   );
 
-  return useMemo(() => ({ ref, phaserLayer: value?.phaserLayer }), [ref, value?.phaserLayer]);
+  return useMemo(() => ({ ref, phaserLayer }), [ref, phaserLayer]);
 };
