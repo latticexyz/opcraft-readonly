@@ -64,7 +64,7 @@ export function createInputSystem(context: PhaserLayer, network: NetworkLayer) {
         return;
       }
 
-      // await window.setView?.("game");
+      // TODO: move this to store and reverse the source of truth from url to store?
       const params = new URLSearchParams(window.location.search);
       params.set("view", "game");
       console.log(`navigating to ${window.location.pathname}?${params.toString()}`);

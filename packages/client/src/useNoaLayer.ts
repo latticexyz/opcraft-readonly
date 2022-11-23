@@ -49,6 +49,7 @@ export const useNoaLayer = ({ networkLayer, hidden = false }: Props) => {
     if (!value) return;
     console.log(hidden ? "hiding noa layer" : "showing noa layer");
     value.noaLayer.noa.setPaused(hidden);
+    value.noaLayer.noa.container.setPointerLock(!hidden);
   }, [hidden, value]);
 
   const ref = useCallback(
