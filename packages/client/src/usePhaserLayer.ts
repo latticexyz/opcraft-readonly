@@ -2,13 +2,13 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { NetworkLayer } from "./layers/network";
 import { createPhaserLayer, PhaserLayer } from "./layers/phaser";
 import { phaserConfig } from "./layers/phaser/config";
+import useResizeObserver, { ResizeHandler } from "use-resize-observer";
+import { throttle } from "lodash";
 
 // TODO: keep+pause the old phaser instance when spinning up a new one to avoid flash?
-// TODO: use our own ResizeObserver instead of phaser's native resize on an interval (it's buggy)
 
 const createContainer = () => {
   const container = document.createElement("div");
-  container.id = `phaser-container-${Math.random()}`;
   container.style.width = "100%";
   container.style.height = "100%";
   container.style.pointerEvents = "all";
@@ -24,6 +24,7 @@ type Props = {
 export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
   const parentRef = useRef<HTMLElement | null>(null);
   const [value, setValue] = useState<{ phaserLayer: PhaserLayer; container: HTMLElement } | null>(null);
+  const [{ width, height }, setSize] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     if (!networkLayer) return;
@@ -38,7 +39,12 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
       ...phaserConfig,
       scale: {
         ...phaserConfig.scale,
-        parent: container.id,
+        parent: container,
+        // Phaser's default resize handling isn't great, so we'll do our own
+        // TODO: make a Phaser PR for this?
+        mode: Phaser.Scale.NONE,
+        width,
+        height,
       },
     });
     phaserLayerPromise.then((phaserLayer) => setValue({ phaserLayer, container }));
@@ -63,17 +69,34 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
     }
   }, [hidden, value]);
 
+  const onResize = useMemo<ResizeHandler>(() => {
+    console.log("setting up on resize");
+    return throttle(({ width, height }) => {
+      console.log("size changed, updating state,", width, height);
+      setSize({ width: width ?? 0, height: height ?? 0 });
+    }, 500);
+  }, []);
+  useResizeObserver({
+    ref: value?.container,
+    onResize,
+  });
+
+  useEffect(() => {
+    if (hidden || !value) return;
+    console.log("resizing phaser to", width, height);
+    value.phaserLayer.game.scale.resize(width, height);
+  }, [width, height, hidden, value]);
+
   const ref = useCallback(
     (el: HTMLElement | null) => {
       console.log("got new phaser parent el", el);
-      if (el) {
-        parentRef.current = el;
-        if (value) {
-          el.appendChild(value.container);
+      parentRef.current = el;
+      if (value) {
+        if (parentRef.current) {
+          parentRef.current.appendChild(value.container);
+        } else {
+          value.container.remove();
         }
-      } else {
-        parentRef.current = null;
-        value?.container.remove();
       }
     },
     [value]
