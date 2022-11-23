@@ -1,10 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { NetworkLayer } from "./layers/network";
-import { createPhaserLayer, PhaserLayer } from "./layers/phaser";
+import { createPhaserLayer } from "./layers/phaser";
 import { phaserConfig } from "./layers/phaser/config";
 import useResizeObserver, { ResizeHandler } from "use-resize-observer";
 import { throttle } from "lodash";
 import { usePromiseValue } from "./usePromiseValue";
+import { debug as parentDebug } from "./debug";
+
+const debug = parentDebug.extend("usePhaserLayer");
 
 const createContainer = () => {
   const container = document.createElement("div");
@@ -22,14 +25,13 @@ type Props = {
 
 export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
   const parentRef = useRef<HTMLElement | null>(null);
-  const [value, setValue] = useState<{ phaserLayer: PhaserLayer; container: HTMLElement } | null>(null);
   const [{ width, height }, setSize] = useState({ width: 0, height: 0 });
 
   const { phaserLayerPromise, container } = useMemo(() => {
     if (!networkLayer) return { phaserLayerPromise: null, container: null };
-    console.log("got new network layer");
+    debug("got new network layer");
 
-    console.log("creating phaser layer");
+    debug("creating phaser layer");
     const container = createContainer();
     if (parentRef.current) {
       parentRef.current.appendChild(container);
@@ -56,7 +58,7 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
 
   useEffect(() => {
     return () => {
-      console.log("disposing of old phaser layer");
+      debug("disposing of old phaser layer");
       phaserLayerPromise?.then((phaserLayer) => phaserLayer.world.dispose());
       container?.remove();
     };
@@ -65,7 +67,7 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
   const phaserLayer = usePromiseValue(phaserLayerPromise);
 
   useEffect(() => {
-    console.log(hidden ? "hiding phaser layer" : "showing phaser layer");
+    debug(hidden ? "hiding phaser layer" : "showing phaser layer");
     if (container) {
       container.hidden = hidden;
     }
@@ -79,9 +81,9 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
   }, [container, hidden, phaserLayer]);
 
   const onResize = useMemo<ResizeHandler>(() => {
-    console.log("setting up on resize");
+    debug("setting up on resize");
     return throttle(({ width, height }) => {
-      console.log("size changed, updating state,", width, height);
+      debug("size changed, updating state,", width, height);
       setSize({ width: width ?? 0, height: height ?? 0 });
     }, 500);
   }, []);
@@ -92,13 +94,13 @@ export const usePhaserLayer = ({ networkLayer, hidden = false }: Props) => {
 
   useEffect(() => {
     if (hidden || !phaserLayer) return;
-    console.log("resizing phaser to", width, height);
+    debug("resizing phaser to", width, height);
     phaserLayer.game.scale.resize(width, height);
   }, [width, height, hidden, phaserLayer]);
 
   const ref = useCallback(
     (el: HTMLElement | null) => {
-      console.log("got new phaser parent el", el);
+      debug("got new phaser parent el", el);
       parentRef.current = el;
       if (container) {
         if (parentRef.current) {

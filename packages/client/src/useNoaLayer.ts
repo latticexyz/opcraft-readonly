@@ -1,6 +1,9 @@
 import React, { useCallback, useEffect, useRef, useMemo } from "react";
 import { NetworkLayer } from "./layers/network";
 import { createNoaLayer } from "./layers/noa";
+import { debug as parentDebug } from "./debug";
+
+const debug = parentDebug.extend("useNoaLayer");
 
 const createContainer = () => {
   const container = document.createElement("div");
@@ -26,9 +29,9 @@ export const useNoaLayer = ({ networkLayer, hidden = false }: Props) => {
   const { noaLayer, container } =
     useMemo(() => {
       if (!networkLayer) return { noaLayer: null, container: null };
-      console.log("got new network layer");
+      debug("got new network layer");
 
-      console.log("creating noa layer");
+      debug("creating noa layer");
       const container = createContainer();
       if (parentRef.current) {
         parentRef.current.appendChild(container);
@@ -41,14 +44,14 @@ export const useNoaLayer = ({ networkLayer, hidden = false }: Props) => {
 
   useEffect(() => {
     return () => {
-      console.log("disposing of old noa layer");
+      debug("disposing of old noa layer");
       noaLayer?.world.dispose();
       container?.remove();
     };
   }, [container, noaLayer]);
 
   useEffect(() => {
-    console.log(hidden ? "hiding noa layer" : "showing noa layer");
+    debug(hidden ? "hiding noa layer" : "showing noa layer");
     if (container) {
       container.hidden = hidden;
     }
@@ -60,7 +63,7 @@ export const useNoaLayer = ({ networkLayer, hidden = false }: Props) => {
 
   const ref = useCallback(
     (el: HTMLElement | null) => {
-      console.log("got new noa parent el", el);
+      debug("got new noa parent el", el);
       parentRef.current = el;
       if (container) {
         if (parentRef.current) {

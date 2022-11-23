@@ -13,8 +13,6 @@ type PhaserEngineConfig = Parameters<typeof createPhaserEngine>[0];
  * The Phaser layer is responsible for rendering game objects to the screen.
  */
 export async function createPhaserLayer(network: NetworkLayer, phaserEngineConfig: PhaserEngineConfig = phaserConfig) {
-  console.log("createPhaserLayer called");
-
   // --- WORLD ----------------------------------------------------------------------
   const world = namespaceWorld(network.world, "phaser");
   const { SingletonEntity } = network;

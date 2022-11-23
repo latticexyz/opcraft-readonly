@@ -3,6 +3,9 @@ import { createNetworkLayer, GameConfig } from "./layers/network";
 import { useSearchParams } from "react-router-dom";
 import { getBurnerWallet } from "./getBurnerWallet";
 import { usePromiseValue } from "./usePromiseValue";
+import { debug as parentDebug } from "./debug";
+
+const debug = parentDebug.extend("useNetworkLayer");
 
 const networkDefaults: Omit<GameConfig, "privateKey" | "devMode"> = {
   chainId: 64657,
@@ -42,43 +45,42 @@ export const useNetworkLayer = () => {
   if (!jsonRpc) throw new Error("Missing RPC URL");
   // TODO: any other checks to do?
 
-  const networkLayerPromise = useMemo(
-    () =>
-      createNetworkLayer({
-        privateKey,
-        worldAddress,
-        chainId,
-        jsonRpc,
-        wsRpc,
-        snapshotUrl,
-        streamServiceUrl,
-        relayServiceUrl,
-        faucetServiceUrl,
-        devMode,
-        blockTime,
-        initialBlockNumber,
-        blockExplorer,
-      }),
-    [
-      blockExplorer,
-      blockTime,
-      chainId,
-      devMode,
-      faucetServiceUrl,
-      initialBlockNumber,
-      jsonRpc,
+  const networkLayerPromise = useMemo(() => {
+    debug("creating network layer");
+    return createNetworkLayer({
       privateKey,
-      relayServiceUrl,
+      worldAddress,
+      chainId,
+      jsonRpc,
+      wsRpc,
       snapshotUrl,
       streamServiceUrl,
-      worldAddress,
-      wsRpc,
-    ]
-  );
+      relayServiceUrl,
+      faucetServiceUrl,
+      devMode,
+      blockTime,
+      initialBlockNumber,
+      blockExplorer,
+    });
+  }, [
+    blockExplorer,
+    blockTime,
+    chainId,
+    devMode,
+    faucetServiceUrl,
+    initialBlockNumber,
+    jsonRpc,
+    privateKey,
+    relayServiceUrl,
+    snapshotUrl,
+    streamServiceUrl,
+    worldAddress,
+    wsRpc,
+  ]);
 
   useEffect(() => {
     return () => {
-      console.log("disposing of old network layer");
+      debug("disposing of old network layer");
       networkLayerPromise.then((networkLayer) => networkLayer.world.dispose());
     };
   }, [networkLayerPromise]);
