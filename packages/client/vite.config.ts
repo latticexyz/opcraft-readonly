@@ -10,32 +10,41 @@ export default defineConfig({
       strict: false,
     },
   },
-  // root: "src",
-  // build: {
-  //   outDir: "../dist",
-  //   emptyOutDir: true,
-  //   sourcemap: true,
-  //   assetsInlineLimit: 0,
-  //   target: "es2022",
-  // },
-  // preview: {
-  //   port: 3000,
-  // },
-  // resolve: {
-  //   dedupe: ["proxy-deep", "styled-components"],
-  // },
+  preview: {
+    port: 3000,
+  },
+  build: {
+    outDir: "../dist",
+    emptyOutDir: true,
+    // If you get out-of-memory issues, it's probably due to sourcemaps. Try
+    // doing more code splitting more manual chunks below.
+    sourcemap: true,
+    assetsInlineLimit: 0,
+    target: "es2022",
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          phaser: ["phaser"],
+          noa: ["noa-engine"],
+          babylon: ["@babylonjs/core"],
+          mud: [
+            "@latticexyz/ecs-browser",
+            "@latticexyz/network",
+            "@latticexyz/phaserx",
+            "@latticexyz/recs",
+            "@latticexyz/services",
+            "@latticexyz/std-client",
+            "@latticexyz/utils",
+          ],
+        },
+      },
+    },
+  },
   define: {
     global: "globalThis",
   },
-  // optimizeDeps: {
-  //   esbuildOptions: {
-  //     target: "es2022",
-  //   },
-  //   exclude: ["@latticexyz/noise", "buffer"],
-  // },
-  // server: {
-  //   fs: {
-  //     strict: false,
-  //   },
-  // },
 });
