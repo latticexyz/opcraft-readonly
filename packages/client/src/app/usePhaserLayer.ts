@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { NetworkLayer } from "./layers/network";
-import { createPhaserLayer } from "./layers/phaser";
-import { phaserConfig } from "./layers/phaser/config";
+import { NetworkLayer } from "../layers/network";
+import { createPhaserLayer } from "../layers/phaser";
+import { phaserConfig } from "../layers/phaser/config";
 import useResizeObserver, { ResizeHandler } from "use-resize-observer";
 import { throttle } from "lodash";
-import { usePromiseValue } from "./usePromiseValue";
-import { debug as parentDebug } from "./debug";
+import { usePromiseValue } from "../usePromiseValue";
+import { debug as parentDebug } from "../debug";
 
 const debug = parentDebug.extend("usePhaserLayer");
 

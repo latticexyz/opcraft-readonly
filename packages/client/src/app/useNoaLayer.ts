@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useMemo } from "react";
-import { NetworkLayer } from "./layers/network";
-import { createNoaLayer } from "./layers/noa";
-import { debug as parentDebug } from "./debug";
+import { NetworkLayer } from "../layers/network";
+import { createNoaLayer } from "../layers/noa";
+import { debug as parentDebug } from "../debug";
 
 const debug = parentDebug.extend("useNoaLayer");
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNoaLayer } from "./useNoaLayer";
-import { useStore } from "./store";
-import { NetworkLayer } from "./layers/network";
+import { useStore } from "../store";
+import { NetworkLayer } from "../layers/network";
 
 type Props = {
   networkLayer: NetworkLayer | null;

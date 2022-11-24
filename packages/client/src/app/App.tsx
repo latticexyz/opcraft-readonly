@@ -1,20 +1,27 @@
-import React from "react";
-import { LoadingScreen } from "./LoadingScreen";
-import { ViewToggle } from "./ViewToggle";
+import React, { useEffect } from "react";
+import { LoadingScreen } from "./ui/LoadingScreen";
+import { ViewToggle } from "./ui/ViewToggle";
 import { useView } from "./useView";
-import { Position } from "./Position";
+import { Position } from "./ui/Position";
 import styled from "styled-components";
-import { JoinSocial } from "./layers/react/components/JoinSocial";
-import { MapLayerToggle } from "./MapLayerToggle";
+import { JoinSocial } from "../layers/react/components/JoinSocial";
+import { MapLayerToggle } from "./ui/MapLayerToggle";
 import { NoaLayer } from "./NoaLayer";
 import { PhaserLayer } from "./PhaserLayer";
-import { Container } from "./layers/react/components/common";
-import { useStore } from "./store";
-import { Layer } from "./Layer";
+import { Container } from "../layers/react/components/common";
+import { useStore } from "../store";
+import { Layer } from "./ui/Layer";
+import { useNetworkLayer } from "./useNetworkLayer";
 
 export const App = () => {
-  const networkLayer = useStore((state) => state.networkLayer);
   const [view] = useView();
+  const networkLayer = useNetworkLayer();
+
+  useEffect(() => {
+    if (networkLayer) {
+      useStore.setState({ networkLayer });
+    }
+  }, [networkLayer]);
 
   return (
     <>

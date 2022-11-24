@@ -2,16 +2,16 @@ import React, { useMemo, useState } from "react";
 import { pixelCoordToTileCoord } from "@latticexyz/phaserx";
 import { map, distinctUntilChanged, merge, EMPTY } from "rxjs";
 import styled from "styled-components";
-import { TILE_HEIGHT, TILE_WIDTH } from "./layers/phaser/constants";
-import { Button, CloseableContainer, Container, Gold } from "./layers/react/components/common";
+import { TILE_HEIGHT, TILE_WIDTH } from "../../layers/phaser/constants";
+import { Button, CloseableContainer, Container, Gold } from "../../layers/react/components/common";
 import { mapObject, VoxelCoord } from "@latticexyz/utils";
-import { getChunkCoord, getChunkEntity } from "./utils/chunk";
-import playerNames from "../data/playerNames.json";
-import chunkClaims from "../data/chunkClaims.json";
-import { getHighestTilesAt } from "./layers/phaser/getHighestTilesAt";
-import { useStore } from "./store";
-import { useView } from "./useView";
-import { useObservable } from "./useObservable";
+import { getChunkCoord, getChunkEntity } from "../../utils/chunk";
+import playerNames from "../../../data/playerNames.json";
+import chunkClaims from "../../../data/chunkClaims.json";
+import { getHighestTilesAt } from "../../layers/phaser/getHighestTilesAt";
+import { useStore } from "../../store";
+import { useView } from "../useView";
+import { useObservable } from "../../useObservable";
 
 export const Position = () => {
   const [view, setView] = useView();

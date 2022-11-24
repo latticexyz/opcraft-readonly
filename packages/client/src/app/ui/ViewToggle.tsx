@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { TILE_HEIGHT, TILE_WIDTH } from "./layers/phaser/constants";
-import { Container } from "./layers/react/components/common";
-import { useStore } from "./store";
-import { useView } from "./useView";
+import { TILE_HEIGHT, TILE_WIDTH } from "../../layers/phaser/constants";
+import { Container } from "../../layers/react/components/common";
+import { useStore } from "../../store";
+import { useView } from "../useView";
 
 export const ViewToggle = () => {
   const [view, setView] = useView();

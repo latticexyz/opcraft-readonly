@@ -1,18 +1,10 @@
 import React from "react";
 import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
-import { App } from "./App";
-import { NetworkLayer } from "./NetworkLayer";
+import { App } from "./app/App";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route
-      path="/"
-      element={
-        <NetworkLayer>
-          <App />
-        </NetworkLayer>
-      }
-    >
+    <Route path="/" element={<App />}>
       {/* TODO: other routes? */}
     </Route>
   )

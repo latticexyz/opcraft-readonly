@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo } from "react";
-import { createNetworkLayer, GameConfig } from "./layers/network";
+import { createNetworkLayer, GameConfig } from "../layers/network";
 import { useSearchParams } from "react-router-dom";
-import { getBurnerWallet } from "./getBurnerWallet";
-import { usePromiseValue } from "./usePromiseValue";
-import { debug as parentDebug } from "./debug";
+import { getBurnerWallet } from "../getBurnerWallet";
+import { usePromiseValue } from "../usePromiseValue";
+import { debug as parentDebug } from "../debug";
 
 const debug = parentDebug.extend("useNetworkLayer");
 

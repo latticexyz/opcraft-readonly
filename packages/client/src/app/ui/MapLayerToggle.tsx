@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import { map, concat, of } from "rxjs";
 import styled from "styled-components";
-import { Container } from "./layers/react/components/common";
+import { Container } from "../../layers/react/components/common";
 import { getComponentValue } from "@latticexyz/recs";
-import { useStore } from "./store";
-import { useObservable } from "./useObservable";
+import { useStore } from "../../store";
+import { useObservable } from "../../useObservable";
 import { filterNullish } from "@latticexyz/utils";
 
 export const MapLayerToggle = () => {

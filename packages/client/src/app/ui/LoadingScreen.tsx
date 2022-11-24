@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
-import { BootScreen } from "./layers/react/engine";
+import { BootScreen } from "../../layers/react/engine";
 import { getComponentValue } from "@latticexyz/recs";
 import { GodID, SyncState } from "@latticexyz/network";
 import styled from "styled-components";
-import { LoadingBar } from "./layers/react/components/common";
-import { NetworkLayer } from "./layers/network";
+import { LoadingBar } from "../../layers/react/components/common";
+import { NetworkLayer } from "../../layers/network";
 import { concat, map } from "rxjs";
-import { useObservable } from "./useObservable";
+import { useObservable } from "../../useObservable";
 
 type Props = {
   networkLayer: NetworkLayer | null;
