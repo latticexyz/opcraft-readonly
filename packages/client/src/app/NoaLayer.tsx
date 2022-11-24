@@ -3,6 +3,9 @@ import { useNoaLayer } from "./useNoaLayer";
 import { useStore } from "../store";
 import { NetworkLayer } from "../layers/network";
 
+// We isolate the `useNoaLayer` hook in its own component so that HMR
+// somewhere in the Noa layer doesn't trigger the whole app to re-render.
+
 type Props = {
   networkLayer: NetworkLayer | null;
   hidden?: boolean;
