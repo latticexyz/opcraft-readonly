@@ -1,6 +1,6 @@
 import { getComponentValue, HasValue, runQuery, setComponent, updateComponent } from "@latticexyz/recs";
-import { sleep } from "@latticexyz/utils";
-import { distinctUntilChanged } from "rxjs";
+import { mapObject, sleep, VoxelCoord } from "@latticexyz/utils";
+import { distinctUntilChanged, map } from "rxjs";
 import { store } from "../../../store";
 import { NetworkLayer, BlockType } from "../../network";
 import { TILE_HEIGHT, TILE_WIDTH } from "../../phaser/constants";
@@ -135,7 +135,10 @@ export function createInputSystem(network: NetworkLayer, context: NoaLayer) {
   });
 
   playerPosition$
-    .pipe(distinctUntilChanged((a, b) => a.x === b.x && a.y === b.y && a.z === b.z))
+    .pipe(
+      map((position) => mapObject<VoxelCoord, VoxelCoord>(position, (value) => Math.round(value))),
+      distinctUntilChanged((a, b) => a.x === b.x && a.y === b.y && a.z === b.z)
+    )
     .subscribe((position) => {
       const { phaserLayer } = store.getState();
       phaserLayer?.scenes.Main.camera.centerOnCoord({ x: position.x, y: position.z }, TILE_WIDTH, TILE_HEIGHT);
