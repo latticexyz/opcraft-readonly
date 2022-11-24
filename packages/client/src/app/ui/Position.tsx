@@ -10,7 +10,7 @@ import chunkClaims from "../../../data/chunkClaims.json";
 import { getHighestTilesAt } from "../../layers/phaser/getHighestTilesAt";
 import { useStore } from "../../store";
 import { useView } from "../useView";
-import { useObservable } from "../../useObservable";
+import { useObservableValue } from "../../useObservableValue";
 import { Container } from "./Container";
 import { Gold } from "./Text";
 import { Button } from "./Button";
@@ -22,7 +22,7 @@ export const Position = () => {
   const noaLayer = useStore((state) => state.noaLayer);
   const phaserLayer = useStore((state) => state.phaserLayer);
 
-  const { x, y, z } = useObservable(
+  const { x, y, z } = useObservableValue(
     useMemo(() => {
       if (!networkLayer || !noaLayer || !phaserLayer) return;
 
@@ -53,8 +53,9 @@ export const Position = () => {
         map((position) => mapObject<VoxelCoord, VoxelCoord>(position, (value) => Math.round(value))),
         distinctUntilChanged((a, b) => a.x === b.x && a.y === b.y && a.z === b.z)
       );
-    }, [networkLayer, noaLayer, phaserLayer, view])
-  ) ?? { x: 0, y: 0, z: 0 };
+    }, [networkLayer, noaLayer, phaserLayer, view]),
+    { x: 0, y: 0, z: 0 }
+  );
 
   const chunkId = getChunkEntity(getChunkCoord({ x, y, z }));
   const claim = chunkClaims.find((c) => c.chunkId === chunkId);

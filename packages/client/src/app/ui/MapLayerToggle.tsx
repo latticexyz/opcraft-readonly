@@ -4,13 +4,13 @@ import styled from "styled-components";
 import { Container } from "./Container";
 import { getComponentValue } from "@latticexyz/recs";
 import { useStore } from "../../store";
-import { useObservable } from "../../useObservable";
+import { useObservableValue } from "../../useObservableValue";
 import { filterNullish } from "@latticexyz/utils";
 
 export const MapLayerToggle = () => {
   const networkLayer = useStore((state) => state.networkLayer);
   const phaserLayer = useStore((state) => state.phaserLayer);
-  const toggles = useObservable(
+  const toggles = useObservableValue(
     useMemo(() => {
       if (!networkLayer || !phaserLayer) return;
 
@@ -22,8 +22,9 @@ export const MapLayerToggle = () => {
       return concat(of(getComponentValue(UI, SingletonEntity)), UI.update$.pipe(map((update) => update.value[0]))).pipe(
         filterNullish()
       );
-    }, [networkLayer, phaserLayer])
-  ) ?? { activity: false, height: false, terrain: false };
+    }, [networkLayer, phaserLayer]),
+    { activity: false, height: false, terrain: false }
+  );
 
   const toggleMap = phaserLayer?.api.toggleMap;
 

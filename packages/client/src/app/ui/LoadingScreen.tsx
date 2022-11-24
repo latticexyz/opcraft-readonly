@@ -6,14 +6,15 @@ import { GodID, SyncState } from "@latticexyz/network";
 import { LoadingBar } from "./LoadingBar";
 import { NetworkLayer } from "../../layers/network";
 import { concat, map } from "rxjs";
-import { useObservable } from "../../useObservable";
+import { useObservableValue } from "../../useObservableValue";
+import { filterNullish } from "@latticexyz/utils";
 
 type Props = {
   networkLayer: NetworkLayer | null;
 };
 
 export const LoadingScreen = ({ networkLayer }: Props) => {
-  const loadingState = useObservable(
+  const loadingState = useObservableValue(
     useMemo(() => {
       if (!networkLayer) return;
 
@@ -30,10 +31,12 @@ export const LoadingScreen = ({ networkLayer }: Props) => {
           const GodEntityIndex = world.entityToIndex.get(GodID);
           const loadingState = GodEntityIndex == null ? null : getComponentValue(LoadingState, GodEntityIndex);
           return loadingState ?? null;
-        })
+        }),
+        filterNullish()
       );
-    }, [networkLayer])
-  ) ?? { msg: "Connecting...", percentage: 0, state: SyncState.CONNECTING };
+    }, [networkLayer]),
+    { msg: "Connecting...", percentage: 0, state: SyncState.CONNECTING }
+  );
 
   if (loadingState.state === SyncState.LIVE) {
     return null;
