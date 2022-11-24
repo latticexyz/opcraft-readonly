@@ -183,11 +183,9 @@ export const phaserConfig = {
   },
   scale: defineScaleConfig({
     parent: "phaser-game",
-    zoom: 2,
-    mode: Phaser.Scale.NONE,
+    mode: Phaser.Scale.RESIZE,
   }),
   cameraConfig: defineCameraConfig({
-    phaserSelector: "phaser-game",
     pinchSpeed: 1 / 32,
     wheelSpeed: 1,
     maxZoom: 4,

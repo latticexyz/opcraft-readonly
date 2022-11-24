@@ -1,6 +1,9 @@
 import { getComponentValue, HasValue, runQuery, setComponent, updateComponent } from "@latticexyz/recs";
-import { sleep } from "@latticexyz/utils";
+import { mapObject, sleep, VoxelCoord } from "@latticexyz/utils";
+import { distinctUntilChanged, map } from "rxjs";
+import { store } from "../../../store";
 import { NetworkLayer, BlockType } from "../../network";
+import { TILE_HEIGHT, TILE_WIDTH } from "../../phaser/constants";
 import { FAST_MINING_DURATION, SPAWN_POINT } from "../constants";
 import { HandComponent, HAND_COMPONENT } from "../engine/components/handComponent";
 import { MiningBlockComponent, MINING_BLOCK_COMPONENT } from "../engine/components/miningBlockComponent";
@@ -131,6 +134,16 @@ export function createInputSystem(network: NetworkLayer, context: NoaLayer) {
     updateComponent(Tutorial, SingletonEntity, { moving: false });
   });
 
+  playerPosition$
+    .pipe(
+      map((position) => mapObject<VoxelCoord, VoxelCoord>(position, (value) => Math.round(value))),
+      distinctUntilChanged((a, b) => a.x === b.x && a.y === b.y && a.z === b.z)
+    )
+    .subscribe((position) => {
+      const { phaserLayer } = store.getState();
+      phaserLayer?.scenes.Main.camera.centerOnCoord({ x: position.x, y: position.z }, TILE_WIDTH, TILE_HEIGHT);
+    });
+
   noa.inputs.down.on("slot", (e) => {
     if (!noa.container.hasPointerLock) return;
     console.log(e.key);
@@ -172,12 +185,5 @@ export function createInputSystem(network: NetworkLayer, context: NoaLayer) {
   noa.inputs.bind("plugins", ";");
   noa.inputs.down.on("plugins", () => {
     togglePlugins();
-  });
-
-  noa.inputs.bind("view", "V");
-  noa.inputs.down.on("view", () => {
-    const view = window.getView?.() === "map" ? "game" : "map";
-    noa.container.setPointerLock(view === "game");
-    window.setView?.(view);
   });
 }

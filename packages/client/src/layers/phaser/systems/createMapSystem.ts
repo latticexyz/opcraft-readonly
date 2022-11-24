@@ -8,6 +8,8 @@ import { merge, Subject } from "rxjs";
 import { TILE_HEIGHT } from "../constants";
 import { getHighestTilesAt } from "../getHighestTilesAt";
 
+// TODO: rescale tiles to 2x current size, since the default zoom/scale of the map is now 1x to help with container sizing
+
 /**
  * System reacts to viewport changes and draws the map data (ecs, procgen) to the phaser tilemap
  */
@@ -57,26 +59,21 @@ export function createMapSystem(context: PhaserLayer, network: NetworkLayer) {
    * and draw it on the phaser tilemap
    */
   defineRxSystem(world, newTile$, async ({ x, y: z }) => {
-    requestIdleCallback(
-      () => {
-        const highestTiles = getHighestTilesAt({ x, z, perlin, Position, Position2D, Item });
-        if (!highestTiles) return;
+    const highestTiles = getHighestTilesAt({ x, z, perlin, Position, Position2D, Item });
+    if (!highestTiles) return;
 
-        const { y, foregroundTile, backgroundTile } = highestTiles;
+    const { y, foregroundTile, backgroundTile } = highestTiles;
 
-        const heightTile = HeightMapTiles[Math.max(-8, Math.min(8, Math.floor(y / 8)))];
-        if (heightTile != null) {
-          drawTile(x, z, heightTile, maps.height);
-        }
-        if (foregroundTile != null) {
-          drawTile(x, z, foregroundTile, maps.terrain, "Foreground");
-        }
-        if (backgroundTile != null) {
-          drawTile(x, z, backgroundTile, maps.terrain, "Background");
-        }
-      },
-      { timeout: 3000 }
-    );
+    const heightTile = HeightMapTiles[Math.max(-8, Math.min(8, Math.floor(y / 8)))];
+    if (heightTile != null) {
+      drawTile(x, z, heightTile, maps.height);
+    }
+    if (foregroundTile != null) {
+      drawTile(x, z, foregroundTile, maps.terrain, "Foreground");
+    }
+    if (backgroundTile != null) {
+      drawTile(x, z, backgroundTile, maps.terrain, "Background");
+    }
   });
 
   /**

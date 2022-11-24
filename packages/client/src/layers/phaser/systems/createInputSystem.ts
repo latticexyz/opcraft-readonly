@@ -5,6 +5,8 @@ import { TILE_WIDTH, TILE_HEIGHT } from "../constants";
 import { getHighestTilesAt } from "../getHighestTilesAt";
 import { PhaserLayer } from "../types";
 import { filter } from "rxjs";
+import { router } from "../../../router";
+import { store } from "../../../store";
 
 export function createInputSystem(context: PhaserLayer, network: NetworkLayer) {
   const {
@@ -44,11 +46,12 @@ export function createInputSystem(context: PhaserLayer, network: NetworkLayer) {
     world,
     input.doubleClick$.pipe(filter((pointer) => pointer.event.target instanceof HTMLCanvasElement)),
     async (pointer) => {
-      if (!window.layers?.noa) {
+      const { noaLayer } = store.getState();
+      if (!noaLayer) {
         console.log("not teleporting, no noa layer");
         return;
       }
-      if (!window.layers.noa.noa._paused) {
+      if (!noaLayer.noa._paused) {
         console.log("not teleporting, noa is not paused (already in noa?)");
         return;
       }
@@ -61,11 +64,16 @@ export function createInputSystem(context: PhaserLayer, network: NetworkLayer) {
         return;
       }
 
-      await window.setView?.("game");
+      // TODO: move this to store and reverse the source of truth from url to store?
+      const params = new URLSearchParams(window.location.search);
+      params.set("view", "game");
+      console.log(`navigating to ${window.location.pathname}?${params.toString()}`);
+      router.navigate({ search: params.toString() });
+
       // offset x, z by 0.5 to center player on block
       // and offset y by 1 to be above block
       // TODO: should this be part of teleport itself?
-      window.layers?.noa?.api.teleport({ x: x + 0.5, y: highestTiles.y + 1, z: z + 0.5 });
+      noaLayer.api.teleport({ x: x + 0.5, y: highestTiles.y + 1, z: z + 0.5 });
     }
   );
 }

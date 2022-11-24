@@ -7,10 +7,12 @@ import { TILE_HEIGHT, ZoomLevel } from "./constants";
 import { createZoomLevel } from "./createZoomLevel";
 import { defineUIComponent } from "./components";
 
+type PhaserEngineConfig = Parameters<typeof createPhaserEngine>[0];
+
 /**
  * The Phaser layer is responsible for rendering game objects to the screen.
  */
-export async function createPhaserLayer(network: NetworkLayer) {
+export async function createPhaserLayer(network: NetworkLayer, phaserEngineConfig: PhaserEngineConfig = phaserConfig) {
   // --- WORLD ----------------------------------------------------------------------
   const world = namespaceWorld(network.world, "phaser");
   const { SingletonEntity } = network;
@@ -21,12 +23,11 @@ export async function createPhaserLayer(network: NetworkLayer) {
   };
 
   // Set initial values
-  setComponent(components.UI, SingletonEntity, { terrain: true, height: true, activity: true });
+  setComponent(components.UI, SingletonEntity, { terrain: true, height: true, activity: false });
 
   // --- PHASER ENGINE SETUP --------------------------------------------------------
-  const { game, scenes, dispose: disposePhaser } = await createPhaserEngine(phaserConfig);
+  const { game, scenes, dispose: disposePhaser } = await createPhaserEngine(phaserEngineConfig);
   world.registerDisposer(disposePhaser);
-  scenes.Main.camera.setZoom(1 / 2);
 
   const chunks = createChunks(scenes.Main.camera.worldView$, TILE_HEIGHT * 64, TILE_HEIGHT * 16); // Tile size in pixels * Tiles per chunk
 
