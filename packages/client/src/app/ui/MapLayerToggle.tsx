@@ -37,7 +37,6 @@ export const MapLayerToggle = () => {
             checked={toggles.activity}
             disabled={!toggleMap}
             onChange={(event) => {
-              // event.preventDefault();
               toggleMap?.("activity", event.target.checked);
             }}
           />{" "}
@@ -51,7 +50,6 @@ export const MapLayerToggle = () => {
             checked={toggles.height}
             disabled={!toggleMap}
             onChange={(event) => {
-              // event.preventDefault();
               toggleMap?.("height", event.target.checked);
             }}
           />{" "}
@@ -65,7 +63,6 @@ export const MapLayerToggle = () => {
             checked={toggles.terrain}
             disabled={!toggleMap}
             onChange={(event) => {
-              // event.preventDefault();
               toggleMap?.("terrain", event.target.checked);
             }}
           />{" "}
