@@ -1,7 +1,7 @@
 import { ActionState } from "@latticexyz/std-client";
 import React from "react";
 import styled from "styled-components";
-import { ActionStatusIcon } from "../Action";
+import { ActionStatusIcon } from "./Action";
 import { Container } from "./Container";
 
 type Props = {

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { PendingIcon } from "./icons/PendingIcon";
 import { CheckIcon } from "./icons/CheckIcon";
 import { CloseIcon } from "./icons/CloseIcon";
-import { Container } from "./common";
+import { Container } from "./Container";
 
 type Props = {
   state: ActionState;

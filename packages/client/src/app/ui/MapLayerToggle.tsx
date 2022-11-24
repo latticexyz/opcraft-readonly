@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { map, concat, of } from "rxjs";
 import styled from "styled-components";
-import { Container } from "../../layers/react/components/common";
+import { Container } from "./Container";
 import { getComponentValue } from "@latticexyz/recs";
 import { useStore } from "../../store";
 import { useObservable } from "../../useObservable";

@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
-import { BootScreen } from "../../layers/react/engine";
+import styled from "styled-components";
+import { BootScreen } from "./BootScreen";
 import { getComponentValue } from "@latticexyz/recs";
 import { GodID, SyncState } from "@latticexyz/network";
-import styled from "styled-components";
-import { LoadingBar } from "../../layers/react/components/common";
+import { LoadingBar } from "./LoadingBar";
 import { NetworkLayer } from "../../layers/network";
 import { concat, map } from "rxjs";
 import { useObservable } from "../../useObservable";

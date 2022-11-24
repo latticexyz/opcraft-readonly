@@ -3,7 +3,6 @@ import { pixelCoordToTileCoord } from "@latticexyz/phaserx";
 import { map, distinctUntilChanged, merge, EMPTY } from "rxjs";
 import styled from "styled-components";
 import { TILE_HEIGHT, TILE_WIDTH } from "../../layers/phaser/constants";
-import { Button, CloseableContainer, Container, Gold } from "../../layers/react/components/common";
 import { mapObject, VoxelCoord } from "@latticexyz/utils";
 import { getChunkCoord, getChunkEntity } from "../../utils/chunk";
 import playerNames from "../../../data/playerNames.json";
@@ -12,6 +11,10 @@ import { getHighestTilesAt } from "../../layers/phaser/getHighestTilesAt";
 import { useStore } from "../../store";
 import { useView } from "../useView";
 import { useObservable } from "../../useObservable";
+import { Container } from "./Container";
+import { Gold } from "./Text";
+import { Button } from "./Button";
+import { CloseableContainer } from "./CloseableContainer";
 
 export const Position = () => {
   const [view, setView] = useView();
